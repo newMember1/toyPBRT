@@ -49,7 +49,7 @@
      <string>run</string>
     </property>
    </widget>
-   <widget class="QWidget" name="">
+   <widget class="QWidget" name="layoutWidget">
     <property name="geometry">
      <rect>
       <x>30</x>
@@ -69,7 +69,14 @@
         </widget>
        </item>
        <item>
-        <widget class="QSpinBox" name="spinBox"/>
+        <widget class="QSpinBox" name="spinBox_nx">
+         <property name="minimum">
+          <number>100</number>
+         </property>
+         <property name="maximum">
+          <number>4096</number>
+         </property>
+        </widget>
        </item>
       </layout>
      </item>
@@ -83,7 +90,14 @@
         </widget>
        </item>
        <item>
-        <widget class="QSpinBox" name="spinBox_2"/>
+        <widget class="QSpinBox" name="spinBox_ny">
+         <property name="minimum">
+          <number>100</number>
+         </property>
+         <property name="maximum">
+          <number>4096</number>
+         </property>
+        </widget>
        </item>
       </layout>
      </item>
@@ -97,7 +111,14 @@
         </widget>
        </item>
        <item>
-        <widget class="QSpinBox" name="spinBox_3"/>
+        <widget class="QSpinBox" name="spinBox_ns">
+         <property name="minimum">
+          <number>1</number>
+         </property>
+         <property name="maximum">
+          <number>10000</number>
+         </property>
+        </widget>
        </item>
       </layout>
      </item>

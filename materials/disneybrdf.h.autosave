@@ -1,0 +1,11 @@
+#ifndef DISNEYBRDF_H
+#define DISNEYBRDF_H
+#include"../core/materialBase.h"
+
+class disneyBRDF:public materialBase
+{
+public:
+    disneyBRDF();
+};
+
+#endif // DISNEYBRDF_H

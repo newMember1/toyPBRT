@@ -17,18 +17,35 @@ DEFINES += QT_DEPRECATED_WARNINGS
 INCLUDEPATH += /home/zdxiao/Desktop/GLM
 
 SOURCES += \
+    accelerate/bvh.cpp \
+    core/primitiveList.cpp \
     main.cpp \
-    mainwindow.cpp
+    mainwindow.cpp \
+    materials/disneybrdfmaterial.cpp \
+    models/objloader.cpp \
+    primitive/model.cpp \
+    primitive/sphere.cpp \
+    primitive/triangle.cpp
 
 HEADERS += \
+    3rdparty/tiny_obj_loader.h \
     accelerate/bvh.h \
+    camera/simplecamera.h \
     collision/aabb.h \
     core/baseStructure.h \
+    core/cameraBase.h \
     core/materialBase.h \
     core/primitiveBase.h \
     core/primitiveList.h \
     core/texture.h \
-    mainwindow.h
+    core/util.h \
+    mainwindow.h \
+    materials/disneybrdfmaterial.h \
+    models/objloader.h \
+    models/tiny_obj_loader.h \
+    primitive/model.h \
+    primitive/sphere.h \
+    primitive/triangle.h
 
 FORMS += \
     mainwindow.ui

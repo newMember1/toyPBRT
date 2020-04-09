@@ -9,13 +9,19 @@
 
 class primitiveBase
 {
+public:
+    primitiveBase(std::shared_ptr<materialBase> _mat):mat(_mat){}
     virtual ~primitiveBase(){}
-    virtual bool hit(ray &r,hitRecord &hR,float minT,float maxT){}
-    virtual glm::vec3 normal(const glm::vec3 &surPos){}
-    virtual glm::vec3 reflect(const glm::vec3 &inDirec,const glm::vec3 surPos){}
-    virtual aabb box();
+    virtual bool hit(ray &r,hitRecord &h,float minT,float maxT)=0;
+    virtual glm::vec3 normal(const glm::vec3 &surPos)=0;
+    virtual glm::vec3 reflect(const glm::vec3 &inDirec,const glm::vec3 &normal)=0;
+    virtual bool boxHit(const ray &r,float minT,float maxT)=0;
 
-    std::unique_ptr<materialBase *> mat;
+    aabb aabbBox;
+    std::shared_ptr<materialBase> mat=nullptr;
+
+private:
+    primitiveBase(){}
 };
 
 #endif // PRIMITIVEBASE_H

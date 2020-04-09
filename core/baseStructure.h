@@ -1,6 +1,7 @@
 /*use glm to handle operation such as rotate and transpose,may use Eigen or other libs in future*/
 #ifndef BASESTRUCTURE_H
 #define BASESTRUCTURE_H
+#include<memory>
 #include<glm.hpp>
 #include<gtc/matrix_transform.hpp>
 const float PI=3.1415026;
@@ -10,6 +11,7 @@ static unsigned long long seed = 1;
 #define magic2 0xB16
 #define magic3 0x5DEECE66DLL
 
+class materialBase;
 inline void srand48(unsigned int i)
 {
     seed = (((long long int)i) << 16) | rand();
@@ -20,6 +22,15 @@ inline double drand48(void)
     seed = (magic3 * seed + magic2) & 0xFFFFFFFFFFFFLL;
     unsigned int x = seed >> 16;
     return  ((double)x / (double)magic1);
+}
+
+inline float pow2(float a)
+{
+    return a*a;
+}
+inline float pow5(float a)
+{
+    return pow2(a)*pow2(a)*a;
 }
 
 struct ray
@@ -63,10 +74,19 @@ struct line
 
 struct hitRecord
 {
-    float t;
+    float t=1e6;
+    float u,v;
+
     glm::vec3 hitPos;
     glm::vec3 hitNormal;
-    glm::vec3 hitReflect;
+    glm::vec3 hitOutDirec;
+    //glm::vec3 hitReflect;
+
+    //a material pointer and anisotropy attributes
+    //default xAxis and yAxis
+    glm::vec3 xAxis=glm::vec3(0,1,0);
+    glm::vec3 yAxis=glm::vec3(1,0,0);
+    std::shared_ptr<materialBase> matPtr;
 };
 
 #endif // BASESTRUCTURE_H

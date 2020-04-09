@@ -25,7 +25,18 @@ public:
 class constTexture:public texture
 {
 public:
-     constTexture(const glm::vec3 &c):color(c){}
+     constTexture(const glm::vec3 &c)
+     {
+         color.x=c.x;
+         color.y=c.y;
+         color.z=c.z;
+     }
+
+     constTexture(constTexture * t)
+     {
+         color=t->color;
+     };
+
      virtual glm::vec3 baseColor(float u, float v, const glm::vec3 &pos) override
      {
          return color;

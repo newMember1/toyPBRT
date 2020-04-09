@@ -1,0 +1,29 @@
+#ifndef OBJMODEL_H
+#define OBJMODEL_H
+#include"./core/primitiveBase.h"
+#include"./models/objloader.h"
+#include"./accelerate/bvh.h"
+#include"./triangle.h"
+#include<vector>
+
+class objModel:public primitiveBase
+{
+public:
+    objModel(std::string path,std::shared_ptr<materialBase> _mat);
+    bool hit(ray &r, hitRecord &h, float minT, float maxT) override;
+    glm::vec3 normal(const glm::vec3 &surPos) override;
+    glm::vec3 reflect(const glm::vec3 &inDirec, const glm::vec3 &normal) override;
+
+private:
+    std::vector<glm::vec3> verts;
+    std::vector<std::vector<int>> vIndexs;
+    std::vector<glm::vec3> normals;
+    std::vector<std::vector<int>> nIndexs;
+    std::unique_ptr<bvh> tree;
+
+    std::vector<std::unique_ptr<triangle>> triangles;
+    glm::vec3 min;
+    glm::vec3 max;
+};
+
+#endif // OBJMODEL_H
