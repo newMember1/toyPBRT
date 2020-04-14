@@ -11,7 +11,7 @@ public:
     void addPrimitive(std::shared_ptr<primitiveBase> ptr);
     bool hit(ray &r,hitRecord &h,float minT,float maxT);
 
-    glm::vec3 colorTest(ray &r,int times);
+    glm::vec3 colorHitTest(ray &r,int times);
     glm::vec3 color(ray &r,int times);
     std::vector<std::shared_ptr<primitiveBase>> pList;
 

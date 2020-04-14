@@ -7,6 +7,17 @@ triangle::triangle(const glm::vec3 &_a,const glm::vec3 &_b,const glm::vec3 &_c,c
     pb=_b;
     pc=_c;
     n=_n;
+    glm::vec3 tmin,tmax;
+    tmin.x=std::min(pa.x,std::min(pb.x,pc.x))-epslion;
+    tmin.y=std::min(pa.y,std::min(pb.y,pc.y))-epslion;
+    tmin.z=std::min(pa.z,std::min(pb.z,pc.z))-epslion;
+
+    tmax.x=std::max(pa.x,std::max(pb.x,pc.x))+epslion;
+    tmax.y=std::max(pa.y,std::max(pb.y,pc.y))+epslion;
+    tmax.z=std::max(pa.z,std::max(pb.z,pc.z))+epslion;
+
+    this->aabbBox._min=tmin;
+    this->aabbBox._max=tmax;
 }
 
 glm::vec3 triangle::normal(const glm::vec3 &surPos)

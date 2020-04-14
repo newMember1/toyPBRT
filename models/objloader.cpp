@@ -16,6 +16,7 @@ bool objLoader::load(std::string path, std::vector<glm::vec3> &verts, std::vecto
     if (!tinyobj::LoadObj(&attrib, &shapes, &materials, &warn, &err, path.c_str()))
     {
         std::cout << "error in open objModel :" << path << std::endl;
+        return false;
     }
 
     std::unordered_map<glm::vec3,unsigned int,HashFunc,EqualFunc> allVerts;

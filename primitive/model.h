@@ -9,7 +9,7 @@
 class model : public primitiveBase
 {
 public:
-    model(std::string path,std::shared_ptr<materialBase> _mat);
+    model(std::string path,std::shared_ptr<materialBase> _mat=nullptr);
     bool hit(ray &r, hitRecord &h, float minT, float maxT) override;
     glm::vec3 normal(const glm::vec3 &surPos) override;
     glm::vec3 reflect(const glm::vec3 &inDirec, const glm::vec3 &normal) override;

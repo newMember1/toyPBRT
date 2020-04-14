@@ -2,18 +2,20 @@
 
 model::model(std::string path,std::shared_ptr<materialBase> _mat):primitiveBase(_mat)
 {
+    std::cout<<"load model: "<<path<<std::endl;
     if(!objLoader::load(path,verts,vIndexs,normals,nIndexs))
         return;
 
     float maxRange=-1e6;
     for (auto v : verts)
-        maxRange = fmax(std::fmax(abs(v.x), maxRange), std::fmax(abs(v.y), abs(v.z)));
+        maxRange = fmax(std::fmax(abs(v.x), maxRange), std::fmax(abs(v.y),abs(v.z)));
 
     for (auto &v : verts)
         v /= maxRange;
 
     min = glm::vec3(1e6);
     max = glm::vec3(-1e6);
+
     for (auto v : verts)
     {
         min.x = std::fmin(min.x, v.x);
@@ -22,11 +24,14 @@ model::model(std::string path,std::shared_ptr<materialBase> _mat):primitiveBase(
 
         max.x = std::fmax(max.x, v.x);
         max.y = std::fmax(max.y, v.y);
+        max.z = std::fmax(max.z, v.z);
     }
-
+    this->aabbBox._min=min;
+    this->aabbBox._max=max;
     //to do... use multiply threads to accerate calculate
     if (normals.size() == 0)
     {
+        std::cout<<"calculate normals..."<<std::endl;
         for (int i=0;i<vIndexs.size();++i)
         {
             auto idx = vIndexs[i];
@@ -63,6 +68,7 @@ model::model(std::string path,std::shared_ptr<materialBase> _mat):primitiveBase(
         triangles.push_back(std::dynamic_pointer_cast<primitiveBase>(std::move(tri)));
     }
 
+    std::cout<<"constructor model..."<<std::endl;
     modelBVH.reset(new bvh(triangles));
 }
 
@@ -70,6 +76,8 @@ bool model::hit(ray &r, hitRecord &h, float minT, float maxT)
 {
     if(modelBVH==nullptr)
         std::cout<<"error,no data in model..."<<std::endl;
+    if(!aabbBox.hit(r,minT,maxT))
+        std::cout<<"don't hit model"<<std::endl;
     return modelBVH->hit(r,h,minT,maxT);
 }
 

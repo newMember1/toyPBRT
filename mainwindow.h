@@ -6,6 +6,7 @@
 #include<QPixmap>
 #include"./camera/simplecamera.h"
 #include"./primitive/sphere.h"
+#include"./primitive/model.h"
 #include"./core/primitiveList.h"
 #include"./materials/disneybrdfmaterial.h"
 

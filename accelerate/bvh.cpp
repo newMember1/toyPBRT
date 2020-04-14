@@ -41,7 +41,10 @@ void bvh::generateBVHTree(std::shared_ptr<bvhNode> &root,std::vector<std::shared
 bool bvh::hit(ray &r, hitRecord &h, float minT, float maxT)
 {
     if(root==nullptr)
+    {
         std::cout<<"error root is nullptr..."<<std::endl;
+        return false;
+    }
     return root->hit(r,h,minT,maxT);
 }
 

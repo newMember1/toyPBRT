@@ -9,6 +9,7 @@
 #include"./core/primitiveBase.h"
 #include<vector>
 
+extern bool debugFlag;
 struct bvhNode
 {
     std::shared_ptr<bvhNode> left=nullptr;
@@ -36,7 +37,7 @@ struct bvhNode
 
     bvhNode(std::shared_ptr<primitiveBase> _leaf)
     {
-        leaf = _leaf;
+        leaf=_leaf;
         box=leaf->aabbBox;
     }
     bvhNode(){}

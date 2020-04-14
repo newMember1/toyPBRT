@@ -24,10 +24,12 @@ bool primitiveList::hit(ray &r, hitRecord &h, float minT, float maxT)
     return allModels->hit(r,h,minT,maxT);
 }
 
-glm::vec3 primitiveList::colorTest(ray &r, int times)
+glm::vec3 primitiveList::colorHitTest(ray &r, int times)
 {
     hitRecord h;
 
+    if(debugFlag)
+        int a=1;
     if(hit(r,h,epslion,1e6))
         return glm::vec3(0.8,0.7,0.6);
     else
