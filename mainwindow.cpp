@@ -94,9 +94,6 @@ void MainWindow::loadObjects()
 void MainWindow::render()
 {
     //config enviorment
-    std::cout<<"rendering..."<<std::endl;
-    clock_t s,e;
-    s=clock();
     int nx=ui->spinBox_nx->value();
     int ny=ui->spinBox_ny->value();
     int ns=ui->spinBox_ns->value();
@@ -105,8 +102,11 @@ void MainWindow::render()
     img.reset(new QImage(nx,ny,QImage::Format_RGB32));
     ray r(glm::vec3(0.0f),glm::vec3(1.0f));
 
-    std::ofstream outFile("/home/zdxiao/Desktop/test.ppm");
-    outFile<<"p3"<<std::endl<<nx<<" "<<ny<<std::endl<<255<<std::endl;
+    std::vector<glm::vec3> pixels;
+    pixels.reserve(nx*ny);
+    std::cout<<"rendering..."<<std::endl;
+    clock_t s,e;
+    s=clock();
     for(int i=0;i<nx;++i)
     {
         for(int j=ny-1;j>=0;--j)
@@ -123,12 +123,26 @@ void MainWindow::render()
             }
             c/=ns;
             c*=255.99;
+            pixels.push_back(c);
+        }
+    }
+    e=clock();
+
+    std::cout<<"write to ppm file..."<<std::endl;
+    std::ofstream outFile("/home/zdxiao/Desktop/test.ppm");
+    outFile<<"P3"<<std::endl<<nx<<" "<<ny<<std::endl<<255<<std::endl;
+    for(int i=0;i<nx;++i)
+    {
+        for(int j=ny-1;j>=0;--j)
+        {
+            const glm::vec3 &c=pixels[(ny-1-j)+i*ny];
             img->setPixel(i,j,qRgb(c.x,c.y,c.z));
-            outFile<<c.x<<" "<<c.y<<" "<<c.z<<std::endl;
+            outFile<<static_cast<int>(c.x)<<"  "<<static_cast<int>(c.y)<<"  "<<static_cast<int>(c.z)<<std::endl;
         }
     }
     outFile.close();
-    e=clock();
+    std::cout<<"write file done..."<<std::endl;
+
     std::cout<<"rendering time is: "<<(double)(e-s)/CLOCKS_PER_SEC<<"'s"<<std::endl;
 
     QPixmap pixmap(QPixmap::fromImage(*img));
