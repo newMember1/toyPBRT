@@ -84,7 +84,7 @@ void MainWindow::loadObjects()
 //    auto light=std::dynamic_pointer_cast<primitiveBase>(std::move(lightBall));
 //    allObjects.push_back(std::move(light));
 
-    auto gun=std::make_shared<model>("/home/zdxiao/Desktop/models/ak-47/Ak_47/Ak-47.obj",materials["disneyMat"]);
+    auto gun=std::make_shared<model>("/home/zdxiao/Desktop/models/dragon/Dragon/Dragon.obj",materials["disneyMat"]);
     auto gunBase=std::dynamic_pointer_cast<primitiveBase>(std::move(gun));
     allObjects.push_back(gunBase);
     worldList.reset(new primitiveList(allObjects));
@@ -101,7 +101,7 @@ void MainWindow::render()
     int ny=ui->spinBox_ny->value();
     int ns=ui->spinBox_ns->value();
 
-    cam.reset(new simpleCamera(glm::vec3(0,0,3),1,nx,ny));
+    cam.reset(new simpleCamera(glm::vec3(2.5,0,3),glm::vec3(1,0,1),nx,ny));
     img.reset(new QImage(nx,ny,QImage::Format_RGB32));
     ray r(glm::vec3(0.0f),glm::vec3(1.0f));
 
@@ -119,8 +119,7 @@ void MainWindow::render()
             for(int k=0;k<ns;++k)
             {
                 cam->emitRay(i,j,r);
-                glm::vec3 res=worldList->color(r,0);
-                c+=res;
+                c+=glm::clamp(worldList->color(r,0),glm::vec3(0),glm::vec3(1));
             }
             c/=ns;
             c*=255.99;

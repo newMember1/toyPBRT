@@ -28,7 +28,7 @@ model::model(std::string path,std::shared_ptr<materialBase> _mat):primitiveBase(
     }
     this->aabbBox._min=min;
     this->aabbBox._max=max;
-    //to do... use multiply threads to accerate calculate
+
     if (normals.size() == 0)
     {
         std::cout<<"calculate normals..."<<std::endl;

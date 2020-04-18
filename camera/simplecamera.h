@@ -5,8 +5,8 @@
 class simpleCamera :public cameraBase
 {
 public:
-    simpleCamera(glm::vec3 camPos,float _canvasZ,int _width,int _height):
-        cameraBase(camPos,_canvasZ,_width,_height){}
+    simpleCamera(glm::vec3 lookFrom,glm::vec3 lookTo,int _width,int _height):
+        cameraBase(lookFrom,lookTo,_width,_height){}
     void emitRay(float x, float y, ray &r) override
     {
         //add noise to make pic edges more smooth
@@ -16,10 +16,9 @@ public:
         float rX=-1.0*ratio+dX*(x+drand48());
         float rY=1.0-dY*(y+drand48());
 
-        r.pos=this->position;
-        r.direc=glm::normalize(glm::vec3(rX,rY,canvasZ)-r.pos);
+        r.pos=this->lookFrom;
+        r.direc=glm::normalize((lookTo-u*rX+v*rY)-r.pos);
     }
-    /*to do... need to handle viewMatrix when combine with ratio*/
 };
 
 #endif // SIMPLECAMERA_H

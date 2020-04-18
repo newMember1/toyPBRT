@@ -19,6 +19,7 @@ public:
 
     aabb aabbBox;
     std::shared_ptr<materialBase> mat=nullptr;
+    glm::mat4 modelMatrix;
 
 private:
     primitiveBase(){}

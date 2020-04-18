@@ -1,12 +1,8 @@
 #include "objloader.h"
 #include<iostream>
 #include"../3rdparty/tiny_obj_loader.h"
-objLoader::objLoader()
-{
 
-}
-
-bool objLoader::load(std::string path, std::vector<glm::vec3> &verts, std::vector<std::vector<int> > &vIndexs, std::vector<glm::vec3> &norms, std::vector<std::vector<int> > &nIndexs)
+bool objLoader::load(std::string path, std::vector<glm::vec3> &_verts, std::vector<std::vector<int> > &_vIndexs, std::vector<glm::vec3> &_norms, std::vector<std::vector<int> > &_nIndexs)
 {
     tinyobj::attrib_t attrib;
     std::vector<tinyobj::shape_t> shapes;
@@ -19,7 +15,8 @@ bool objLoader::load(std::string path, std::vector<glm::vec3> &verts, std::vecto
         return false;
     }
 
-    std::unordered_map<glm::vec3,unsigned int,HashFunc,EqualFunc> allVerts;
+    std::cout<<"materials.size: "<<materials.size()<<std::endl;
+    std::unordered_map<glm::vec3,unsigned int,HashFunc,EqualFunc> all_verts;
     std::vector<int> vInds;
 
     std::unordered_map<glm::vec3,unsigned int,HashFunc,EqualFunc> allNormals;
@@ -40,12 +37,12 @@ bool objLoader::load(std::string path, std::vector<glm::vec3> &verts, std::vecto
             float c = attrib.vertices[ic];
 
             glm::vec3 vert(a, b, c);
-            if (allVerts.count(vert) == 0)
+            if (all_verts.count(vert) == 0)
             {
-                allVerts.insert(std::make_pair(vert, allVerts.size()));
-                verts.push_back(vert);
+                all_verts.insert(std::make_pair(vert, all_verts.size()));
+                _verts.push_back(vert);
             }
-            vInds.push_back(allVerts[vert]);
+            vInds.push_back(all_verts[vert]);
 
             //2.normal
             if (!noLoadNormals)
@@ -66,7 +63,7 @@ bool objLoader::load(std::string path, std::vector<glm::vec3> &verts, std::vecto
                 if (allNormals.count(norm) == 0)
                 {
                     allNormals.insert(std::make_pair(norm, allNormals.size()));
-                    norms.push_back(norm);
+                    _norms.push_back(norm);
                 }
                 nInds.push_back(allNormals[norm]);
              }
@@ -78,7 +75,7 @@ bool objLoader::load(std::string path, std::vector<glm::vec3> &verts, std::vecto
             ind.push_back(vInds[i]);
             ind.push_back(vInds[i+1]);
             ind.push_back(vInds[i+2]);
-            vIndexs.push_back(ind);
+            _vIndexs.push_back(ind);
         }
         for (int i = 0; i < nInds.size(); i+=3)
         {
@@ -86,8 +83,25 @@ bool objLoader::load(std::string path, std::vector<glm::vec3> &verts, std::vecto
             ind.push_back(nInds[i]);
             ind.push_back(nInds[i + 1]);
             ind.push_back(nInds[i + 2]);
-            nIndexs.push_back(ind);
+            _nIndexs.push_back(ind);
         }
     }
     return true;
+}
+
+bool objLoader::load(std::string path)
+{
+     std::ifstream inFile(path.c_str());
+     if(!inFile.is_open())
+     {
+         std::cout<<"path incorrect : "<<path<<std::endl;
+         return false;
+     }
+
+     std::string line;
+
+     while(std::getline(inFile,line))
+     {
+
+     }
 }

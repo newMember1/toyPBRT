@@ -1,7 +1,7 @@
 #ifndef MODEL_H
 #define MODEL_H
 #include"./core/primitiveBase.h"
-#include"./models/objloader.h"
+#include"./modelLoader/objloader.h"
 #include"./accelerate/bvh.h"
 #include"./triangle.h"
 #include<vector>

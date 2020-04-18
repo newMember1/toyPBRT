@@ -22,7 +22,7 @@ SOURCES += \
     main.cpp \
     mainwindow.cpp \
     materials/disneybrdfmaterial.cpp \
-    models/objloader.cpp \
+    modelLoader/objloader.cpp \
     primitive/model.cpp \
     primitive/sphere.cpp \
     primitive/triangle.cpp
@@ -41,7 +41,7 @@ HEADERS += \
     core/util.h \
     mainwindow.h \
     materials/disneybrdfmaterial.h \
-    models/objloader.h \
+    modelLoader/objloader.h \
     models/tiny_obj_loader.h \
     primitive/model.h \
     primitive/sphere.h \
