@@ -13,6 +13,7 @@ public:
 
     glm::vec3 colorHitTest(ray &r,int times);
     glm::vec3 color(ray &r,int times);
+    glm::vec3 colorIterator(ray &r,int times);
     std::vector<std::shared_ptr<primitiveBase>> pList;
 
     std::unique_ptr<bvh> allModels=nullptr;

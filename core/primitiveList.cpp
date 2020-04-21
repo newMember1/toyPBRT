@@ -39,7 +39,6 @@ glm::vec3 primitiveList::colorHitTest(ray &r, int times)
 glm::vec3 primitiveList::color(ray &r, int times)
 {
     hitRecord h;
-    h.t=1e6;
 
     if(hit(r,h,0.001,1e6))
     {
@@ -60,4 +59,28 @@ glm::vec3 primitiveList::color(ray &r, int times)
         float t=0.5*(r.direc.y+1);
         return glm::vec3(t);
     }
+}
+
+glm::vec3 primitiveList::colorIterator(ray &r, int times)
+{
+    hitRecord h;
+    glm::vec3 res(1.0);
+    for(int i=0;i<times;++i)
+    {
+        if(hit(r,h,0.001,1e6))
+        {
+            if(h.matPtr->isLight)
+                return h.matPtr->tex->baseColor(h.u,h.v,h.hitPos)*res;
+            glm::vec3 albe=h.matPtr->albedo(h,h.hitOutDirec,-r.direc);
+            res=res*albe;
+            r.pos=h.hitPos;
+            r.direc=h.hitOutDirec;
+        }
+        else
+        {
+            float t=0.5*(r.direc.y+1);
+            return glm::vec3(t)*res;
+        }
+    }
+    return glm::vec3(0);
 }

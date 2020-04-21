@@ -119,7 +119,7 @@ void MainWindow::render()
             for(int k=0;k<ns;++k)
             {
                 cam->emitRay(i,j,r);
-                c+=glm::clamp(worldList->color(r,0),glm::vec3(0),glm::vec3(1));
+                c+=glm::clamp(worldList->colorIterator(r,10),glm::vec3(0),glm::vec3(1));
             }
             c/=ns;
             c*=255.99;
