@@ -14,10 +14,10 @@ public:
         float dY=2.0/height;
 
         float rX=-1.0*ratio+dX*(x+drand48());
-        float rY=1.0-dY*(y+drand48());
+        float rY=-1.0+dY*(y+drand48());
 
         r.pos=this->lookFrom;
-        r.direc=glm::normalize((lookTo-u*rX+v*rY)-r.pos);
+        r.direc=glm::normalize((lookTo+u*rX+v*rY)-r.pos);
     }
 };
 

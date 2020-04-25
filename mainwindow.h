@@ -31,6 +31,8 @@ private:
     void loadTextures();
     void loadMaterials();
     void loadObjects();
+
+    bool multiThreads=false;
     Ui::MainWindow *ui;
     std::unique_ptr<QImage> img;
     std::unique_ptr<cameraBase> cam;

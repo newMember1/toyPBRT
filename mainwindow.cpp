@@ -3,6 +3,7 @@
 #include<iostream>
 #include<fstream>
 #include<sstream>
+#include<thread>
 
 bool debugFlag=false;
 
@@ -94,6 +95,7 @@ void MainWindow::loadObjects()
 void MainWindow::render()
 {
     //config enviorment
+    this->multiThreads=true;
     int nx=ui->spinBox_nx->value();
     int ny=ui->spinBox_ny->value();
     int ns=ui->spinBox_ns->value();
@@ -109,7 +111,7 @@ void MainWindow::render()
     s=clock();
     for(int i=0;i<nx;++i)
     {
-        for(int j=ny-1;j>=0;--j)
+        for(int j=0;j<ny;++j)
         {
             if(i==nx*0.4&&j==ny*0.4)
                 debugFlag=true;
@@ -123,7 +125,8 @@ void MainWindow::render()
             }
             c/=ns;
             c*=255.99;
-            pixels.push_back(c);
+            pixels[j+i*ny]=c;
+            std::cout<<j+i*ny<<std::endl;
         }
     }
     e=clock();
@@ -133,16 +136,16 @@ void MainWindow::render()
     outFile<<"P3"<<std::endl<<nx<<" "<<ny<<std::endl<<255<<std::endl;
     for(int i=0;i<nx;++i)
     {
-        for(int j=ny-1;j>=0;--j)
+        for(int j=0;j<ny;++j)
         {
-            const glm::vec3 &c=pixels[(ny-1-j)+i*ny];
+            const glm::vec3 &c=pixels[(ny-1-j)+(nx-1-i)*ny];
             img->setPixel(i,j,qRgb(c.x,c.y,c.z));
             outFile<<static_cast<int>(c.x)<<"  "<<static_cast<int>(c.y)<<"  "<<static_cast<int>(c.z)<<std::endl;
         }
     }
+
     outFile.close();
     std::cout<<"write file done..."<<std::endl;
-
     std::cout<<"rendering time is: "<<(double)(e-s)/CLOCKS_PER_SEC<<"'s"<<std::endl;
 
     QPixmap pixmap(QPixmap::fromImage(*img));
@@ -151,3 +154,4 @@ void MainWindow::render()
     pixmap = pixmap.scaled(w, h, Qt::KeepAspectRatio, Qt::SmoothTransformation);
     ui->imageLabel->setPixmap(pixmap);
 }
+
