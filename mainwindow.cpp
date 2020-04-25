@@ -126,7 +126,6 @@ void MainWindow::render()
             c/=ns;
             c*=255.99;
             pixels[j+i*ny]=c;
-            std::cout<<j+i*ny<<std::endl;
         }
     }
     e=clock();
