@@ -36,6 +36,7 @@ void MainWindow::initPBRTResource()
 
     //connect signal
     connect(ui->renderBotton,&QPushButton::clicked,this,&MainWindow::render);
+    connect(ui->radioButton_multiThread,&QRadioButton::clicked,this,&MainWindow::enableMultiThreads);
 }
 
 void MainWindow::initWorld()
@@ -92,10 +93,17 @@ void MainWindow::loadObjects()
     std::cout<<"loadObjects done..."<<std::endl<<std::endl;
 }
 
+void MainWindow::enableMultiThreads()
+{
+    if(this->ui->radioButton_multiThread->isChecked())
+        this->multiThreads=true;
+    else
+        this->multiThreads=false;
+}
+
 void MainWindow::render()
 {
     //config enviorment
-    this->multiThreads=true;
     int nx=ui->spinBox_nx->value();
     int ny=ui->spinBox_ny->value();
     int ns=ui->spinBox_ns->value();
@@ -106,31 +114,65 @@ void MainWindow::render()
 
     std::vector<glm::vec3> pixels;
     pixels.reserve(nx*ny);
-    std::cout<<"rendering..."<<std::endl;
-    clock_t s,e;
-    s=clock();
-    for(int i=0;i<nx;++i)
+    time_t s,e;
+    time(&s);
+
+    const int numThread=std::thread::hardware_concurrency();
+    if(this->multiThreads)
     {
-        for(int j=0;j<ny;++j)
+        std::cout<<"multiThreads rendering..."<<std::endl;
+        int taskPerThread;
+        if(nx%(numThread-1))
+            taskPerThread=nx/(numThread-1);
+        else
+            taskPerThread=nx/(numThread-1)+1;
+
+        std::vector<std::thread> tasks;
+        tasks.reserve(numThread-1);
+        for(int i=0;i<numThread-1;++i)
         {
-            if(i==nx*0.4&&j==ny*0.4)
-                debugFlag=true;
-            else
-                debugFlag=false;
-            glm::vec3 c(0);
-            for(int k=0;k<ns;++k)
+            int xs,xe;
+            int ys,ye;
+            xs=taskPerThread*i;
+            xe=std::min(taskPerThread*(i+1),nx);
+            ys=0;
+            ye=ny;
+            tasks.push_back(
+                        std::thread(MainWindow::renderParallel,
+                                    std::ref(this->cam),
+                                    std::ref(this->worldList),
+                                    xs,xe,ys,ye,nx,ny,ns,
+                                    std::ref(pixels)));
+        }
+        for(int i=0;i<numThread-1;++i)
+            tasks[i].join();
+    }
+    else
+    {
+        std::cout<<"rendering..."<<std::endl;
+        for(int i=0;i<nx;++i)
+        {
+            for(int j=0;j<ny;++j)
             {
-                cam->emitRay(i,j,r);
-                c+=glm::clamp(worldList->colorIterator(r,10),glm::vec3(0),glm::vec3(1));
+                if(i==nx*0.4&&j==ny*0.4)
+                    debugFlag=true;
+                else
+                    debugFlag=false;
+                glm::vec3 c(0);
+                for(int k=0;k<ns;++k)
+                {
+                    cam->emitRay(i,j,r);
+                    c+=glm::clamp(worldList->colorIterator(r,10),glm::vec3(0),glm::vec3(1));
+                }
+                c/=ns;
+                c*=255.99;
+                pixels[j+i*ny]=c;
             }
-            c/=ns;
-            c*=255.99;
-            pixels[j+i*ny]=c;
         }
     }
-    e=clock();
+    time(&e);
+    std::cout<<"rendering time is: "<<(double)(e-s)<<"'s"<<std::endl;
 
-    std::cout<<"write to ppm file..."<<std::endl;
     std::ofstream outFile("/home/zdxiao/Desktop/test.ppm");
     outFile<<"P3"<<std::endl<<nx<<" "<<ny<<std::endl<<255<<std::endl;
     for(int i=0;i<nx;++i)
@@ -142,10 +184,7 @@ void MainWindow::render()
             outFile<<static_cast<int>(c.x)<<"  "<<static_cast<int>(c.y)<<"  "<<static_cast<int>(c.z)<<std::endl;
         }
     }
-
     outFile.close();
-    std::cout<<"write file done..."<<std::endl;
-    std::cout<<"rendering time is: "<<(double)(e-s)/CLOCKS_PER_SEC<<"'s"<<std::endl;
 
     QPixmap pixmap(QPixmap::fromImage(*img));
     int w=ui->imageLabel->width();
@@ -154,3 +193,22 @@ void MainWindow::render()
     ui->imageLabel->setPixmap(pixmap);
 }
 
+void MainWindow::renderParallel(std::unique_ptr<cameraBase> &cam, std::unique_ptr<primitiveList> &worldList, int xs, int xe, int ys, int ye, int nx, int ny, int ns, std::vector<glm::vec3> &pixels)
+{
+    ray r(glm::vec3(0.0f),glm::vec3(1.0f));
+    for(int i=xs;i<xe;++i)
+    {
+        for(int j=ys;j<ye;++j)
+        {
+            glm::vec3 c(0);
+            for(int k=0;k<ns;++k)
+            {
+                cam->emitRay(i,j,r);
+                c+=glm::clamp(worldList->colorIterator(r,10),glm::vec3(0),glm::vec3(1));
+            }
+            c/=ns;
+            c*=255.99;
+            pixels[j+i*ny]=c;
+        }
+    }
+}

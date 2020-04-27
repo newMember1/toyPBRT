@@ -24,7 +24,10 @@ public:
     MainWindow(QWidget *parent = nullptr);
     virtual ~MainWindow();
 
+    static void renderParallel(std::unique_ptr<cameraBase> &cam,std::unique_ptr<primitiveList> &worldList,int xs,int xe,int ys,int ye,int nx,int ny,int ns,std::vector<glm::vec3> &pixels);
+public slots:
     void render();
+    void enableMultiThreads();
 private:
     void initPBRTResource();
     void initWorld();
