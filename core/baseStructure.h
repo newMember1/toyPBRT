@@ -75,12 +75,13 @@ struct line
 struct hitRecord
 {
     float t=1e6;
-    float u,v;
 
+    float u,v;
+    float hitPdf;
     glm::vec3 hitPos;
     glm::vec3 hitNormal;
     glm::vec3 hitOutDirec;
-    //glm::vec3 hitReflect;
+    glm::vec3 hitReflect;
 
     //a material pointer and anisotropy attributes
     //default xAxis and yAxis

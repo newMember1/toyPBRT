@@ -1,5 +1,5 @@
 #include "sphere.h"
-#include"./core/util.h"
+#include"./core/baseStructure.h"
 
 extern bool debugFlag;
 
@@ -35,7 +35,6 @@ bool sphere::hit(ray &r, hitRecord &h, float minT, float maxT)
             h.hitNormal=this->normal(h.hitPos);
 
             h.hitOutDirec=this->reflect(r.direc,h.hitNormal);
-            //h.hitOutDirec=h.hitNormal+randSphere();
             h.matPtr=this->mat;
             return true;
         }
@@ -57,4 +56,9 @@ glm::vec3 sphere::reflect(const glm::vec3 &inDirec, const glm::vec3 &normal)
 bool sphere::boxHit(const ray &r, float minT, float maxT)
 {
     return aabbBox.hit(r,minT,maxT);
+}
+
+void sphere::handleMatrix()
+{
+    center = glm::vec3(glm::vec4(center, 1.0) * modelMatrix);
 }

@@ -37,7 +37,6 @@ class objLoader
 {
 public:
     static bool load(std::string path,std::vector<glm::vec3>&_verts,std::vector<std::vector<int>> &_vIndexs, std::vector<glm::vec3> &_norms, std::vector<std::vector<int>> &_nIndexs);
-    static bool load(std::string path);
 
     std::vector<glm::vec3> verts;
     std::vector<glm::vec3> normals;

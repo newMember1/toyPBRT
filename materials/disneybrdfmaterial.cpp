@@ -13,6 +13,10 @@ disneyBRDFMaterial::disneyBRDFMaterial(float _subSurface,float _metallic,float _
     sheenTint=_sheenTint;
     clearCoat=_clearCoat;
     clearCoatGloss=_clearCoatGloss;
+
+    aspect=sqrt(1-anisotropic*0.9);
+    ax=glm::max(0.001f,pow2(roughness)/aspect);
+    ay=glm::max(0.001f,pow2(roughness)*aspect);
 }
 
 disneyBRDFMaterial::disneyBRDFMaterial(std::shared_ptr<texture> _tex)
@@ -28,6 +32,66 @@ disneyBRDFMaterial::disneyBRDFMaterial(std::shared_ptr<texture> _tex)
     sheenTint=0.5;
     clearCoat=0;
     clearCoatGloss=1;
+
+    aspect=sqrt(1-anisotropic*0.9);
+    ax=glm::max(0.001f,pow2(roughness)/aspect);
+    ay=glm::max(0.001f,pow2(roughness)*aspect);
+}
+
+void disneyBRDFMaterial::setSubSurface(float _subSurface)
+{
+    subSurface = _subSurface;
+}
+
+void disneyBRDFMaterial::setMetallic(float _metallic)
+{
+    metallic = _metallic;
+}
+
+void disneyBRDFMaterial::setSpecular(float _specular)
+{
+    specular = _specular;
+}
+
+void disneyBRDFMaterial::setRoughness(float _roughness)
+{
+    roughness = _roughness;
+    aspect=sqrt(1-anisotropic*0.9);
+    ax=glm::max(0.001f,pow2(roughness)/aspect);
+    ay=glm::max(0.001f,pow2(roughness)*aspect);
+}
+
+void disneyBRDFMaterial::setSpecularTint(float _specularTint)
+{
+    specularTint = _specularTint;
+}
+
+void disneyBRDFMaterial::setAnisotropic(float _anisotropic)
+{
+    anisotropic = _anisotropic;
+    aspect=sqrt(1-anisotropic*0.9);
+    ax=glm::max(0.001f,pow2(roughness)/aspect);
+    ay=glm::max(0.001f,pow2(roughness)*aspect);
+}
+
+void disneyBRDFMaterial::setSheen(float _sheen)
+{
+    sheen = _sheen;
+}
+
+void disneyBRDFMaterial::setSheenTint(float _sheenTint)
+{
+    sheenTint = _sheenTint;
+}
+
+void disneyBRDFMaterial::setClearCoat(float _clearCoat)
+{
+    clearCoat = _clearCoat;
+}
+
+void disneyBRDFMaterial::setClearCoatGloss(float _clearCoatGloss)
+{
+    clearCoatGloss = _clearCoatGloss;
 }
 
 glm::vec3 disneyBRDFMaterial::albedo(const hitRecord &hitRec,const glm::vec3 & inDirec,const glm::vec3 & outDirec)
@@ -41,6 +105,7 @@ glm::vec3 disneyBRDFMaterial::albedo(const hitRecord &hitRec,const glm::vec3 & i
     float dotNL=glm::dot(N,L);
     float dotNV=glm::dot(N,V);
     float dotHL=glm::dot(H,L);
+
 //    if(dotNL<0||dotNV<0)
 //    {
 //        std::cout<<"N is: "<<N.x<<" "<<N.y<<" "<<N.z<<std::endl;
@@ -65,10 +130,6 @@ glm::vec3 disneyBRDFMaterial::albedo(const hitRecord &hitRec,const glm::vec3 & i
     float ss=1.25*(Fss*(1.0/(dotNL+dotNV)-0.5)+0.5);
 
     //2.then specular
-    float aspect=sqrt(1-anisotropic*0.9);
-    float ax=glm::max(0.001f,pow2(roughness)/aspect);
-    float ay=glm::max(0.001f,pow2(roughness)*aspect);
-
     float dotHX=glm::dot(H,hitRec.xAxis);
     float dotHY=glm::dot(H,hitRec.yAxis);
     float Ds=GTR2_aniso(dotNH,dotHX,dotHY,ax,ay);

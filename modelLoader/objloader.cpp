@@ -15,7 +15,6 @@ bool objLoader::load(std::string path, std::vector<glm::vec3> &_verts, std::vect
         return false;
     }
 
-    std::cout<<"materials.size: "<<materials.size()<<std::endl;
     std::unordered_map<glm::vec3,unsigned int,HashFunc,EqualFunc> all_verts;
     std::vector<int> vInds;
 
@@ -87,21 +86,4 @@ bool objLoader::load(std::string path, std::vector<glm::vec3> &_verts, std::vect
         }
     }
     return true;
-}
-
-bool objLoader::load(std::string path)
-{
-     std::ifstream inFile(path.c_str());
-     if(!inFile.is_open())
-     {
-         std::cout<<"path incorrect : "<<path<<std::endl;
-         return false;
-     }
-
-     std::string line;
-
-     while(std::getline(inFile,line))
-     {
-
-     }
 }

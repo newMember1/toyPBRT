@@ -6,6 +6,7 @@
 #include<QPixmap>
 #include"./camera/simplecamera.h"
 #include"./primitive/sphere.h"
+#include"./primitive/rectangle.h"
 #include"./primitive/model.h"
 #include"./core/primitiveList.h"
 #include"./materials/disneybrdfmaterial.h"
@@ -34,6 +35,9 @@ private:
     void loadTextures();
     void loadMaterials();
     void loadObjects();
+    void loadLightObjects();
+    void loadNonLightObjects();
+    void configObjectPosition();
 
     bool multiThreads=false;
     Ui::MainWindow *ui;
@@ -41,6 +45,7 @@ private:
     std::unique_ptr<cameraBase> cam;
     std::unique_ptr<primitiveList> worldList;
 
+    std::unordered_map<std::string,std::shared_ptr<primitiveBase>> objects;
     std::unordered_map<std::string,std::shared_ptr<texture>> textures;
     std::unordered_map<std::string,std::shared_ptr<materialBase>> materials;
 };

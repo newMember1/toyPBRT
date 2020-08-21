@@ -18,12 +18,14 @@ INCLUDEPATH += /home/zdxiao/Desktop/GLM
 
 SOURCES += \
     accelerate/bvh.cpp \
+    core/pdfGenerate.cpp \
     core/primitiveList.cpp \
     main.cpp \
     mainwindow.cpp \
     materials/disneybrdfmaterial.cpp \
     modelLoader/objloader.cpp \
     primitive/model.cpp \
+    primitive/rectangle.cpp \
     primitive/sphere.cpp \
     primitive/triangle.cpp
 
@@ -35,15 +37,20 @@ HEADERS += \
     core/baseStructure.h \
     core/cameraBase.h \
     core/materialBase.h \
+    core/onb.h \
+    core/pdfBase.h \
+    core/pdfGenerate.h \
     core/primitiveBase.h \
     core/primitiveList.h \
     core/texture.h \
-    core/util.h \
     mainwindow.h \
     materials/disneybrdfmaterial.h \
     modelLoader/objloader.h \
     models/tiny_obj_loader.h \
+    pdf/cosinePdf.h \
+    pdf/rectLightPdf.h \
     primitive/model.h \
+    primitive/rectangle.h \
     primitive/sphere.h \
     primitive/triangle.h
 

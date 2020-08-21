@@ -14,7 +14,7 @@ public:
     glm::vec3 normal(const glm::vec3 &surPos) override;
     glm::vec3 reflect(const glm::vec3 &inDirec, const glm::vec3 &normal) override;
     bool boxHit(const ray &r, float minT, float maxT) override;
-
+    void handleMatrix() override;
 private:
     std::vector<glm::vec3> verts;
     std::vector<std::vector<int>> vIndexs;
