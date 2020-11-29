@@ -12,16 +12,16 @@ public:
         lightRect = rec;
     }
 
-    glm::vec3 generate(const glm::vec3 & surfPos) const override
+    glm::vec3 generate(const glm::vec3 & p) const override
     {
         float e1 = drand48();
         float e2 = drand48();
-        glm::vec3 p = lightRect->oriPos + lightRect->wDirec * e1 * lightRect->w + lightRect->hDirec * e2 * lightRect->h;
-        toLight = p - surfPos;
-        return toLight;
+        glm::vec3 t = lightRect->oriPos + lightRect->wDirec * e1 * lightRect->w + lightRect->hDirec * e2 * lightRect->h;
+        toLight = t - p;
+        return glm::normalize(toLight);
     }
 
-    float value(const glm::vec3 & dirction) const override
+    float value(const glm::vec3 & direction) const override
     {
         //note that we integral dA
         //in fact the pdf is 1/area because we integral on lightRect

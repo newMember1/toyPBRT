@@ -6,7 +6,7 @@ extern bool debugFlag;
 primitiveList::primitiveList(std::vector<std::shared_ptr<primitiveBase>> &datas)
 {
     pList.reserve(datas.size());
-    for(int i=0;i<datas.size();++i)
+    for(int i=0; i<datas.size(); ++i)
        pList.push_back(datas[i]);
 
     allModels.reset(new bvh(pList));
@@ -21,6 +21,11 @@ primitiveList::primitiveList(std::unordered_map<std::string, std::shared_ptr<pri
     allModels.reset(new bvh(pList));
 }
 
+void primitiveList::setMode(int m)
+{
+    mode = (colorMode)m;
+}
+
 void primitiveList::addPrimitive(std::shared_ptr<primitiveBase> ptr)
 {
     pList.push_back(std::move(ptr));
@@ -33,71 +38,167 @@ bool primitiveList::hit(ray &r, hitRecord &h, float minT, float maxT)
     return allModels->hit(r,h,minT,maxT);
 }
 
+std::vector<float> primitiveList::getColors()
+{
+    return debugColors;
+}
+
+std::vector<float> primitiveList::getVertices()
+{
+    return debugVertices;
+}
+
+glm::vec3 primitiveList::color(ray &r, int times)
+{
+    switch (mode)
+    {
+    case iterator:
+        return colorIterator(r, times);
+        break;
+    case recursive:
+        return colorRecursive(r, times);
+        break;
+    case hitTest:
+        return colorHitTest(r, times);
+        break;
+    case normalVis:
+        return colorNormalVis(r, times);
+        break;
+    case normalTest:
+        return colorNormalTest(r, times);
+        break;
+    }
+}
+
 glm::vec3 primitiveList::colorHitTest(ray &r, int times)
 {
     hitRecord h;
-
-    if(debugFlag)
-        int a=1;
     if(hit(r,h,epslion,1e6))
-        return glm::vec3(0.8,0.7,0.6);
+        return h.matPtr->tex->baseColor(h.u, h.v, h.hitPos);
     else
-        return glm::vec3(0.1,0.2,0.3);
+        return glm::vec3(0);
 }
 
 glm::vec3 primitiveList::colorNormalVis(ray &r, int times)
 {
     hitRecord h;
+    glm::vec3 hitRes;
     if(hit(r, h, epslion, 1e6))
-        return h.hitNormal;
+    {
+        hitRes.x = h.hitNormal.x > 0 ? h.hitNormal.x : 0;
+        hitRes.y = h.hitNormal.y > 0 ? h.hitNormal.y : 0;
+        hitRes.z = h.hitNormal.z > 0 ? h.hitNormal.z : 0;
+        return hitRes;
+    }
     else
         return glm::vec3(0.1, 0.2, 0.3);
 }
 
-glm::vec3 primitiveList::color(ray &r, int times)
+glm::vec3 primitiveList::colorNormalTest(ray &r, int times)
+{
+    hitRecord h;
+    glm::vec3 hitRes;
+    if(hit(r, h, epslion, 1e6))
+    {
+        if(glm::dot(r.direc ,h.hitNormal) > 0)
+            hitRes = glm::vec3(1, 0, 0);
+        else
+            hitRes = glm::vec3(0, 0, 1);
+
+        return hitRes;
+    }
+    else
+    {
+        return glm::vec3(0.1, 0.2, 0.3);
+    }
+}
+
+glm::vec3 primitiveList::colorRecursive(ray &r, int times)
 {
     hitRecord h;
 
     if(hit(r,h,0.001,1e6))
     {
-        if(h.matPtr->isLight)
-            return h.matPtr->tex->baseColor(h.u,h.v,h.hitPos);
-
-        if(times>20)
+        if(times>MAX_TRACE_TIMES)
             return glm::vec3(0);
 
         //notice that ray.indirec means the -outDirec in brdf and outDirec
         glm::vec3 albe=h.matPtr->albedo(h,h.hitOutDirec,-r.direc) / h.hitPdf;
         r.pos=h.hitPos;
         r.direc=h.hitOutDirec;
-        return albe*color(r,times+1);
+
+        return albe*colorRecursive(r,times+1);
     }
     else
     {
-        float t=0.5*(r.direc.y+1);
-        return glm::vec3(t);
+        return glm::vec3(0);
     }
 }
 
 glm::vec3 primitiveList::colorIterator(ray &r, int times)
 {
-    hitRecord h;
-    glm::vec3 res(1.0);
-    for(int i=0;i<times;++i)
+    //need to expand to avoid using stack
+    if(debugFlag)
     {
-        if(hit(r,h,0.001,1e6))
+        debugVertices.push_back(r.pos.x);
+        debugVertices.push_back(r.pos.y);
+        debugVertices.push_back(r.pos.z);
+
+        debugColors.push_back(0);
+        debugColors.push_back(0);
+        debugColors.push_back(0);
+    }
+
+    glm::vec3 res{1,1,1};
+    for(int i = 0; i < MAX_TRACE_TIMES; ++i)
+    {
+        hitRecord h;
+        if(hit(r, h, 0.001, 1e6))
         {
             if(h.matPtr->isLight)
-                return h.matPtr->tex->baseColor(h.u,h.v,h.hitPos)*res;
-            glm::vec3 albe=h.matPtr->albedo(h,h.hitOutDirec,-r.direc) / h.hitPdf;
-            res=res*albe;
-            r.pos=h.hitPos;
-            r.direc=h.hitOutDirec;
+            {
+                if(glm::dot(r.direc, h.hitNormal) < 0)
+                    return res * h.matPtr->tex->baseColor(h.u, h.v, h.hitPos);
+                else
+                    return glm::vec3{0, 0, 0};
+            }
+
+            glm::vec3 albe = h.matPtr->albedo(h, h.hitOutDirec, - r.direc) / h.hitPdf;
+            res *= albe;
+            r.pos = h.hitPos;
+            r.direc = h.hitOutDirec;
+
+            if(debugFlag)
+            {
+                debugVertices.push_back(h.hitPos.x);
+                debugVertices.push_back(h.hitPos.y);
+                debugVertices.push_back(h.hitPos.z);
+
+                debugColors.push_back(h.matPtr->tex->baseColor(0, 0, glm::vec3(0)).x);
+                debugColors.push_back(h.matPtr->tex->baseColor(0, 0, glm::vec3(0)).y);
+                debugColors.push_back(h.matPtr->tex->baseColor(0, 0, glm::vec3(0)).z);
+
+//                std::cout<<"r.pos: "<<r.pos.x<<" "<<r.pos.y<<" "<<r.pos.z<<std::endl;
+//                std::cout<<"r.direc: "<<r.direc.x<<" "<<r.direc.y<<" "<<r.direc.z<<std::endl;
+//                std::cout<<"h.hitNormal: "<<h.hitNormal.x<<" "<<h.hitNormal.y<<" "<<h.hitNormal.z<<std::endl;
+//                std::cout<<"h.hitOutDirec: "<<h.hitOutDirec.x<<" "<<h.hitOutDirec.y<<" "<<h.hitOutDirec.z<<std::endl<<std::endl;
+            }
         }
         else
         {
-            return glm::vec3(0);
+            if(debugFlag)
+            {
+                debugVertices.push_back(h.hitPos.x + h.hitOutDirec.x * 700);
+                debugVertices.push_back(h.hitPos.y + h.hitOutDirec.y * 700);
+                debugVertices.push_back(h.hitPos.z + h.hitOutDirec.z * 700);
+
+                debugColors.push_back(0);
+                debugColors.push_back(0);
+                debugColors.push_back(0);
+            }
+            return glm::vec3{0, 0, 0};
         }
     }
-    return glm::vec3(0);
+
+    return glm::vec3{0, 0, 0};
 }
