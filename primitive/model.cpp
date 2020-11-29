@@ -6,66 +6,21 @@ model::model(std::string path,std::shared_ptr<materialBase> _mat):primitiveBase(
     if(!objLoader::load(path,verts,vIndexs,normals,nIndexs))
         return;
 
-    float maxRange=-1e6;
-    for (auto v : verts)
-        maxRange = fmax(std::fmax(abs(v.x), maxRange), std::fmax(abs(v.y),abs(v.z)));
-
-    for (auto &v : verts)
-        v /= maxRange;
-
     min = glm::vec3(1e6);
     max = glm::vec3(-1e6);
-
-    for (auto v : verts)
-    {
-        min.x = std::fmin(min.x, v.x);
-        min.y = std::fmin(min.y, v.y);
-        min.z = std::fmin(min.z, v.z);
-
-        max.x = std::fmax(max.x, v.x);
-        max.y = std::fmax(max.y, v.y);
-        max.z = std::fmax(max.z, v.z);
-    }
-    this->aabbBox._min=min;
-    this->aabbBox._max=max;
-
-    if (normals.size() == 0)
-    {
-        std::cout<<"model::calculate normals..."<<std::endl;
-        for (int i=0;i<vIndexs.size();++i)
-        {
-            auto idx = vIndexs[i];
-            int a = idx[0];
-            int b = idx[1];
-            int c = idx[2];
-
-            //clockwise calculate normal
-            glm::vec3 p1 = verts[a];
-            glm::vec3 p2 = verts[b];
-            glm::vec3 p3 = verts[c];
-            float na = (p2.y - p1.y)*(p3.z - p1.z) - (p3.y - p1.y)*(p2.z - p1.z);
-            float nb = (p2.z - p1.z)*(p3.x - p1.x) - (p3.z - p1.z)*(p2.x - p1.x);
-            float nc = (p2.x - p1.x)*(p3.y - p1.y) - (p3.x - p1.x)*(p2.y - p1.y);
-
-            glm::vec3 n(na, nb, nc);
-
-            n = glm::normalize(n);
-            normals.push_back(n);
-        }
-    }
 
     for(int i=0;i<vIndexs.size();++i)
     {
         auto idx=vIndexs[i];
-        int a=idx[0];
-        int b=idx[1];
-        int c=idx[2];
+        int a = idx[0];
+        int b = idx[1];
+        int c = idx[2];
 
-        auto p1=verts[a];
-        auto p2=verts[b];
-        auto p3=verts[c];
-        auto n=normals[i];
-        std::shared_ptr<triangle> tri(new triangle(p1,p2,p3,n,mat));
+        auto p1 = verts[a];
+        auto p2 = verts[b];
+        auto p3 = verts[c];
+
+        std::shared_ptr<triangle> tri(new triangle(p1, p2, p3, mat));
         triangles.push_back(std::dynamic_pointer_cast<primitiveBase>(std::move(tri)));
     }
 
@@ -92,48 +47,86 @@ glm::vec3 model::reflect(const glm::vec3 &inDirec, const glm::vec3 &normal)
     return glm::normalize(inDirec - 2 * glm::dot(inDirec, normal)*normal);
 }
 
+void model::setTranslate(const glm::vec3 &trans)
+{
+    for(auto & tri : triangles)
+        tri->setTranslate(trans);
+}
+
+void model::setRotate(const glm::vec3 &rotateAxis, float angle)
+{
+    for(auto & tri : triangles)
+        tri->setRotate(rotateAxis, angle);
+}
+
+void model::setUniformScale(float s)
+{
+    for(auto & tri : triangles)
+    {
+        tri->setUniformScale(s);
+    }
+}
+
+void model::setNonUniformScale(const glm::vec3 &s)
+{
+    for(auto & tri : triangles)
+    {
+        tri->setNonUniformScale(s);
+    }
+}
+
+void model::setModelMatrix(const glm::mat4 &m)
+{
+    for(auto & tri : triangles)
+        tri->setModelMatrix(m);
+}
+
 bool model::boxHit(const ray &r, float minT, float maxT)
 {
     return aabbBox.hit(r,minT,maxT);
 }
 
+std::vector<std::vector<float>> model::getModelLinesAndColors()
+{
+    std::vector<float> verts;
+    std::vector<float> colors;
+    for(auto tri : triangles)
+    {
+        auto datas = tri->getModelLinesAndColors();
+        auto vert = datas[0];
+        auto color = datas[1];
+        for(auto v : vert)
+            verts.push_back(v);
+        for(auto c : color)
+            colors.push_back(c);
+    }
+
+    return {verts, colors};
+}
+
 void model::handleMatrix()
 {
-    //update verts and aabb box
-    for(auto &v : verts)
+    for(auto & tri : triangles)
     {
-        v = glm::vec3(glm::vec4(v, 1.0) * modelMatrix);
-        min.x = std::fmin(min.x, v.x);
-        min.y = std::fmin(min.y, v.y);
-        min.z = std::fmin(min.z, v.z);
-
-        max.x = std::fmax(max.x, v.x);
-        max.y = std::fmax(max.y, v.y);
-        max.z = std::fmax(max.z, v.z);
+        tri->handleMatrix();
     }
+
+    //update verts and aabb box
+    min = glm::vec3(1e6);
+    max = glm::vec3(-1e6);
+    for(auto tri : triangles)
+    {
+        min.x = std::fmin(min.x, tri->aabbBox._min.x);
+        min.y = std::fmin(min.y, tri->aabbBox._min.y);
+        min.z = std::fmin(min.z, tri->aabbBox._min.z);
+
+        max.x = std::fmax(max.x, tri->aabbBox._max.x);
+        max.y = std::fmax(max.y, tri->aabbBox._max.y);
+        max.z = std::fmax(max.z, tri->aabbBox._max.z);
+    }
+
     this->aabbBox._min=min;
     this->aabbBox._max=max;
-
-    //update normals
-    glm::mat4 G = glm::transpose(invModelMatrix);
-    for (auto &n : normals)
-        n = glm::vec3(glm::vec4(n, 1.0) * G);
-
-    //update triangles
-    for (int i=0; i<vIndexs.size(); ++i)
-    {
-        auto idx = vIndexs[i];
-        int a = idx[0];
-        int b = idx[1];
-        int c = idx[2];
-
-        auto p1 = verts[a];
-        auto p2 = verts[b];
-        auto p3 = verts[c];
-        auto n = normals[i];
-        std::shared_ptr<triangle> tri(new triangle(p1,p2,p3,n,mat));
-        triangles[i] = std::move(tri);
-    }
 
     modelBVH.reset(new bvh(triangles));
 }

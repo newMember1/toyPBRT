@@ -4,8 +4,11 @@
 #include<memory>
 #include<glm.hpp>
 #include<gtc/matrix_transform.hpp>
+#include<iostream>
+
 const float PI=3.1415026;
-const float epslion=1e-6;
+const float epslion=1e-4;
+const int MAX_TRACE_TIMES = 20;
 static unsigned long long seed = 1;
 #define magic1 0x100000000LL
 #define magic2 0xB16
@@ -77,7 +80,7 @@ struct hitRecord
     float t=1e6;
 
     float u,v;
-    float hitPdf;
+    float hitPdf = 1;
     glm::vec3 hitPos;
     glm::vec3 hitNormal;
     glm::vec3 hitOutDirec;

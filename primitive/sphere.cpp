@@ -53,12 +53,50 @@ glm::vec3 sphere::reflect(const glm::vec3 &inDirec, const glm::vec3 &normal)
     return glm::normalize(inDirec - 2 * glm::dot(inDirec, normal)*normal);
 }
 
+std::vector<std::vector<float>> sphere::getModelLinesAndColors()
+{
+    std::vector<float> verts;
+    std::vector<float> colors;
+
+    std::cout<<"to do..."<<std::endl;
+    std::cout<<"finding ways to make sphere trianglization..."<<std::endl;
+    return {verts, colors};
+}
+
 bool sphere::boxHit(const ray &r, float minT, float maxT)
 {
     return aabbBox.hit(r,minT,maxT);
 }
 
+void sphere::setTranslate(const glm::vec3 &trans)
+{
+    glm::mat4 translate(1.0f);
+    translate = glm::translate(translate, trans);
+    modelMatrix = translate * modelMatrix;
+    invModelMatrix = glm::inverse(modelMatrix);
+}
+
+void sphere::setRotate(const glm::vec3 &rotateAxis, float angle)
+{
+    glm::mat4 rotate;
+    rotate = glm::rotate(rotate, glm::radians(angle), rotateAxis);
+    modelMatrix = rotate * modelMatrix;
+    invModelMatrix = glm::inverse(modelMatrix);
+}
+
+void sphere::setUniformScale(float s)
+{
+    radius *= s;
+}
+
+void sphere::setNonUniformScale(const glm::vec3 &s)
+{
+    std::cout<<"sphere setNonUniformScale not done..."<<std::endl;
+}
+
 void sphere::handleMatrix()
 {
-    center = glm::vec3(glm::vec4(center, 1.0) * modelMatrix);
+    center = glm::vec3(modelMatrix * glm::vec4(center, 1.0));
+    this->aabbBox=aabb(this->center-glm::vec3(radius),
+                       this->center+glm::vec3(radius));
 }

@@ -2,6 +2,11 @@ QT       += core gui
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
+QMAKE_CXXFLAGS_DEBUG += -O0
+QMAKE_CXXFLAGS_DEBUG -= -O1
+QMAKE_CXXFLAGS_DEBUG -= -O2
+QMAKE_CXXFLAGS_DEBUG -= -O3
+
 CONFIG += c++11
 CONFIG += console debug
 # The following define makes your compiler emit warnings if you use
@@ -18,41 +23,54 @@ INCLUDEPATH += /home/zdxiao/Desktop/GLM
 
 SOURCES += \
     accelerate/bvh.cpp \
-    core/pdfGenerate.cpp \
+    core/directionGenerator.cpp \
     core/primitiveList.cpp \
+    core/scene.cpp \
+    debugger/ogldebugwindow.cpp \
     main.cpp \
     mainwindow.cpp \
     materials/disneybrdfmaterial.cpp \
+    materials/simplematerial.cpp \
     modelLoader/objloader.cpp \
+    primitive/cube.cpp \
     primitive/model.cpp \
     primitive/rectangle.cpp \
     primitive/sphere.cpp \
-    primitive/triangle.cpp
+    primitive/triangle.cpp \
+    testScenes/cornellbox.cpp
 
 HEADERS += \
     3rdparty/tiny_obj_loader.h \
     accelerate/bvh.h \
+    camera/fovCamera.h \
     camera/simplecamera.h \
     collision/aabb.h \
     core/baseStructure.h \
     core/cameraBase.h \
+    core/directionGenerator.h \
     core/materialBase.h \
     core/onb.h \
     core/pdfBase.h \
-    core/pdfGenerate.h \
     core/primitiveBase.h \
     core/primitiveList.h \
+    core/scene.h \
     core/texture.h \
+    debugger/ogldebugwindow.h \
+    debugger/raytracer.h \
     mainwindow.h \
     materials/disneybrdfmaterial.h \
+    materials/simplematerial.h \
     modelLoader/objloader.h \
     models/tiny_obj_loader.h \
     pdf/cosinePdf.h \
+    pdf/randomPdf.h \
     pdf/rectLightPdf.h \
+    primitive/cube.h \
     primitive/model.h \
     primitive/rectangle.h \
     primitive/sphere.h \
-    primitive/triangle.h
+    primitive/triangle.h \
+    testScenes/cornellbox.h
 
 FORMS += \
     mainwindow.ui
@@ -61,3 +79,12 @@ FORMS += \
 qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
+
+DISTFILES += \
+    shaders/raySimple.frag \
+    shaders/raySimple.vert \
+    shaders/simple.frag \
+    shaders/simple.vert
+
+RESOURCES += \
+    resource.qrc

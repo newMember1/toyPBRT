@@ -20,6 +20,11 @@ struct bvhNode
     //if a node is leaf node then it must include the index
     bool hit(ray &r,hitRecord &h,float minT,float maxT)
     {
+//        if(debugFlag)
+//        {
+//            std::cout<<"box min: "<<box._min.x<<" "<<box._min.y<<" "<<box._min.z<<std::endl;
+//            std::cout<<"box max: "<<box._max.x<<" "<<box._max.y<<" "<<box._max.z<<std::endl;
+//        }
         if(!box.hit(r,minT,maxT))
             return false;
 

@@ -26,7 +26,7 @@ public:
         float dY=2.0/height;
 
         float rX=-1.0*ratio+dX*x;
-        float rY=1.0-dY*y;
+        float rY=-1.0+dY*y;
 
         r.pos=this->lookFrom;
         r.direc=glm::normalize((lookTo+u*rX+v*rY)-r.pos);

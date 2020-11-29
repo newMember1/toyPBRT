@@ -1,4 +1,5 @@
 #include "rectangle.h"
+#include "core/directionGenerator.h"
 
 extern bool debugFlag;
 
@@ -15,9 +16,10 @@ rectangle::rectangle(const glm::vec3 & _oriPos, const glm::vec3 & _wDirec, const
     this->pb = oriPos + glm::normalize(wDirec) * w;
     this->pd = oriPos + glm::normalize(hDirec) * h;
     this->pc = pb + glm::normalize(hDirec) * h;
-    this->N = glm::normalize(glm::cross(wDirec, hDirec));
+    this->n = glm::normalize(glm::cross(wDirec, hDirec));
 
-    glm::vec3 tmin,tmax;
+    glm::vec3 tmin{1.0};
+    glm::vec3 tmax{1.0};
 
     tmin.x = std::min(std::min(pa.x, pb.x), std::min(pc.x, pd.x)) - epslion;
     tmin.y = std::min(std::min(pa.y, pb.y), std::min(pc.y, pd.y)) - epslion;
@@ -33,7 +35,7 @@ rectangle::rectangle(const glm::vec3 & _oriPos, const glm::vec3 & _wDirec, const
 
 glm::vec3 rectangle::normal(const glm::vec3 &surPos)
 {
-    return N;
+    return n;
 }
 
 glm::vec3 rectangle::reflect(const glm::vec3 &inDirec, const glm::vec3 &normal)
@@ -41,11 +43,92 @@ glm::vec3 rectangle::reflect(const glm::vec3 &inDirec, const glm::vec3 &normal)
     return glm::normalize(inDirec - 2 * glm::dot(inDirec, normal)*normal);
 }
 
+std::vector<std::vector<float>> rectangle::getModelLinesAndColors()
+{
+    std::vector<float> verts;
+    std::vector<float> colors;
+    //first line
+    pushData(verts, pa);
+    pushData(verts, pb);
+    pushData(colors, this->mat->tex->baseColor(0, 0, glm::vec3(0)));
+    pushData(colors, this->mat->tex->baseColor(0, 0, glm::vec3(0)));
+
+    //second line
+    pushData(verts, pb);
+    pushData(verts, pc);
+    pushData(colors, this->mat->tex->baseColor(0, 0, glm::vec3(0)));
+    pushData(colors, this->mat->tex->baseColor(0, 0, glm::vec3(0)));
+
+    //third line
+    pushData(verts, pc);
+    pushData(verts, pd);
+    pushData(colors, this->mat->tex->baseColor(0, 0, glm::vec3(0)));
+    pushData(colors, this->mat->tex->baseColor(0, 0, glm::vec3(0)));
+
+    //fourth line
+    pushData(verts, pd);
+    pushData(verts, pa);
+    pushData(colors, this->mat->tex->baseColor(0, 0, glm::vec3(0)));
+    pushData(colors, this->mat->tex->baseColor(0, 0, glm::vec3(0)));
+
+    return {verts, colors};
+}
+
+void rectangle::pushData(std::vector<float> &v, const glm::vec3 &d)
+{
+    v.push_back(d.x);
+    v.push_back(d.y);
+    v.push_back(d.z);
+}
+
 bool rectangle::boxHit(const ray &r, float minT, float maxT)
 {
     return aabbBox.hit(r,minT,maxT);
 }
 
+void rectangle::setTranslate(const glm::vec3 &trans)
+{
+    glm::mat4 translate(1.0f);
+    translate = glm::translate(translate, trans);
+    modelMatrix = translate * modelMatrix;
+    invModelMatrix = glm::inverse(modelMatrix);
+}
+
+void rectangle::setRotate(const glm::vec3 &rotateAxis, float angle)
+{
+    glm::mat4 rotate(1.0f);
+    rotate = glm::rotate(rotate, glm::radians(angle), rotateAxis);
+    modelMatrix = rotate * modelMatrix;
+    invModelMatrix = glm::inverse(modelMatrix);
+
+    n = glm::vec3(rotate * glm::vec4(n, 0.0));
+}
+
+void rectangle::setUniformScale(float s)
+{
+    glm::mat4 scale(1.0);
+    scale = glm::scale(scale, glm::vec3(s));
+    modelMatrix = scale * modelMatrix;
+    invModelMatrix = glm::inverse(modelMatrix);
+}
+
+void rectangle::setNonUniformScale(const glm::vec3 &s)
+{
+    glm::mat4 scale(1.0f);
+    scale = glm::scale(scale, s);
+    modelMatrix = scale * modelMatrix;
+    invModelMatrix = glm::inverse(modelMatrix);
+
+    //need to update normal
+    glm::mat4 G = glm::transpose(invModelMatrix);
+    n = glm::vec3(G * glm::vec4(n, 0.0));
+}
+
+void rectangle::setModelMatrix(const glm::mat4 &m)
+{
+    modelMatrix = m;
+    invModelMatrix = glm::inverse(modelMatrix);
+}
 bool rectangle::rayRect(ray &r, float &u, float &v, float &t)
 {
     //adapt from Moller-triangle algorithm
@@ -99,9 +182,11 @@ bool rectangle::hit(ray &r, hitRecord &h, float minT, float maxT)
         h.t = t;
         h.hitPos = r.pos + t * r.direc;
         h.hitNormal = normal(h.hitPos);
-
-        h.hitOutDirec = this->reflect(r.direc, h.hitNormal);
+        h.hitOutDirec = directionGenerator::getInstance().generate(h.hitPos, h.hitNormal);
+        h.hitOutDirec = glm::normalize(h.hitOutDirec);
+        h.hitPdf = directionGenerator::getInstance().value(h.hitOutDirec);
         h.matPtr = this->mat;
+
         return true;
     }
     else
@@ -110,8 +195,17 @@ bool rectangle::hit(ray &r, hitRecord &h, float minT, float maxT)
 
 void rectangle::handleMatrix()
 {
-    pa = glm::vec3(glm::vec4(pa, 1.0) * modelMatrix);
-    pb = glm::vec3(glm::vec4(pb, 1.0) * modelMatrix);
-    pc = glm::vec3(glm::vec4(pc, 1.0) * modelMatrix);
-    pd = glm::vec3(glm::vec4(pd, 1.0) * modelMatrix);
+    pa = glm::vec3(modelMatrix * glm::vec4(pa, 1.0));
+    pb = glm::vec3(modelMatrix * glm::vec4(pb, 1.0));
+    pc = glm::vec3(modelMatrix * glm::vec4(pc, 1.0));
+    pd = glm::vec3(modelMatrix * glm::vec4(pd, 1.0));
+
+    //update aabb box
+    this->aabbBox._min.x = std::min(std::min(pa.x, pb.x), std::min(pc.x, pd.x)) - epslion;
+    this->aabbBox._min.y = std::min(std::min(pa.y, pb.x), std::min(pc.x, pd.x)) - epslion;
+    this->aabbBox._min.z = std::min(std::min(pa.z, pb.z), std::min(pc.x, pc.z)) - epslion;
+
+    this->aabbBox._max.x = std::max(std::max(pa.x, pb.x), std::max(pc.x, pd.x)) + epslion;
+    this->aabbBox._max.y = std::max(std::max(pa.y, pb.y), std::max(pc.y, pd.y)) + epslion;
+    this->aabbBox._max.z = std::max(std::max(pa.z, pb.z), std::max(pc.z, pd.z)) + epslion;
 }
