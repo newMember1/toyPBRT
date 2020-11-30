@@ -100,18 +100,18 @@ void cornellBox::createObjects()
     leftCube->setRotate(glm::vec3(0, 1, 0), -18);
     leftCube->setTranslate(glm::vec3(212.5, 82.5, 147.5));
     auto leftCubeBase = std::dynamic_pointer_cast<primitiveBase>(leftCube);
-    objects["leftCube"] = leftCubeBase;
+    //objects["leftCube"] = leftCubeBase;
 
     auto rightCube = std::make_shared<cube>(glm::vec3(260, 0, 295), glm::vec3(430, 330, 460), whiteMat);
     rightCube->setTranslate(glm::vec3(-347.5, -165, -377.5));
     rightCube->setRotate(glm::vec3(0, 1, 0), 15);
     rightCube->setTranslate(glm::vec3(347.5, 165, 377.5));
     auto rightCubeBase = std::dynamic_pointer_cast<primitiveBase>(rightCube);
-    objects["rightCube"] = rightCubeBase;
+    //objects["rightCube"] = rightCubeBase;
 
     auto bunny = std::make_shared<model>("/home/zdxiao/Desktop/resources/models/bunny/bunny.obj", blueMat);
     bunny->setUniformScale(1000);
-    bunny->setTranslate(glm::vec3(300, 227.5, 227.5));
+    bunny->setTranslate(glm::vec3(300, 125, 227.5));
     auto bunnyBase = std::dynamic_pointer_cast<primitiveBase>(bunny);
     objects["bunny"] = bunnyBase;
 }
