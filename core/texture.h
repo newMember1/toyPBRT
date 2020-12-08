@@ -3,7 +3,10 @@
 */
 #ifndef TEXTURE_H
 #define TEXTURE_H
-#include"baseStructure.h"
+
+#include "baseStructure.h"
+#include "./3rdparty/stb_image.h"
+
 class texture
 {
 public:
@@ -47,29 +50,33 @@ public:
 class imageTexture:public texture
 {
 public:
-    imageTexture(unsigned char *pixels,int A,int B,int C):
-        data(pixels),nx(A),ny(B),nc(C){}
+    imageTexture(const char * path)
+    {
+        stbi_set_flip_vertically_on_load(true);
+        data = stbi_load(path, &nx, &ny, &nc, 0);
+    }
+
     virtual glm::vec3 baseColor(float u, float v, const glm::vec3 &pos) override
     {
-        int i=u*nx;
-        int j=(1-v)*ny-0.001;
-        if(i<0) i=0;
-        if(j<0) j=0;
-        if(i>nx-1) i=nx-1;
-        if(j>ny-1) j=ny-1;
+        int i = u * nx;
+        int j = (1 - v) * ny - 0.001;
+        if(i < 0) i = 0;
+        if(j < 0) j = 0;
+        if(i > nx - 1) i = nx - 1;
+        if(j > ny - 1) j = ny - 1;
 
-        if(nc==3)
+        if(nc == 3)
         {
-            float r = int(data[3 * i + 3 * nx*j]) / 255.0;
-            float g = int(data[3 * i + 3 * nx*j + 1]) / 255.0;
-            float b = int(data[3 * i + 3 * nx*j + 2]) / 255.0;
+            float r = int(data[3 * i + 3 * nx * j]) / 255.0;
+            float g = int(data[3 * i + 3 * nx * j + 1]) / 255.0;
+            float b = int(data[3 * i + 3 * nx * j + 2]) / 255.0;
             return glm::vec3(r, g, b);
         }
-        if(nc==4)
+        if(nc == 4)
         {
-            float r = int(data[4 * i + 4 * nx*j]) / 255.0;
-            float g = int(data[4 * i + 4 * nx*j + 1]) / 255.0;
-            float b = int(data[4 * i + 4 * nx*j + 2]) / 255.0;
+            float r = int(data[4 * i + 4 * nx * j]) / 255.0;
+            float g = int(data[4 * i + 4 * nx * j + 1]) / 255.0;
+            float b = int(data[4 * i + 4 * nx * j + 2]) / 255.0;
             return glm::vec3(r, g, b);
         }
     }
@@ -79,11 +86,13 @@ public:
 
 class checkTexture:public texture
 {
+public:
     checkTexture(const glm::vec3 &a,const glm::vec3 &b):
         colorA(a),colorB(b){}
     virtual glm::vec3 baseColor(float u, float v, const glm::vec3 &pos) override
     {
-        float sines=sin(10 * pos.x)*sin(10 * pos.y)*sin(10 * pos.z);
+        float sines=sin(pos.x / 10.0) + sin(pos.y / 10.0) + sin(pos.z / 10.0);
+        return glm::vec3(abs(sines));
         if(sines<0)
             return colorA;
         else

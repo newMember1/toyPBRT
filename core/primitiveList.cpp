@@ -100,10 +100,11 @@ glm::vec3 primitiveList::colorNormalTest(ray &r, int times)
     glm::vec3 hitRes;
     if(hit(r, h, epslion, 1e6))
     {
-        if(glm::dot(r.direc ,h.hitNormal) > 0)
-            hitRes = glm::vec3(1, 0, 0);
+        float res = glm::dot(r.direc, h.hitNormal);
+        if(glm::dot(r.direc ,h.hitNormal) < 0)
+            hitRes = glm::vec3(pow(abs(res), 3), pow(abs(res), 2), pow(abs(res), 20));
         else
-            hitRes = glm::vec3(0, 0, 1);
+            hitRes = glm::vec3(0, 0, 0);
 
         return hitRes;
     }
@@ -155,19 +156,6 @@ glm::vec3 primitiveList::colorIterator(ray &r, int times)
         hitRecord h;
         if(hit(r, h, 0.001, 1e6))
         {
-            if(h.matPtr->isLight)
-            {
-                if(glm::dot(r.direc, h.hitNormal) < 0)
-                    return res * h.matPtr->tex->baseColor(h.u, h.v, h.hitPos);
-                else
-                    return glm::vec3{0, 0, 0};
-            }
-
-            glm::vec3 albe = h.matPtr->albedo(h, h.hitOutDirec, - r.direc) / h.hitPdf;
-            res *= albe;
-            r.pos = h.hitPos;
-            r.direc = h.hitOutDirec;
-
             if(debugFlag)
             {
                 debugVertices.push_back(h.hitPos.x);
@@ -178,11 +166,34 @@ glm::vec3 primitiveList::colorIterator(ray &r, int times)
                 debugColors.push_back(h.matPtr->tex->baseColor(0, 0, glm::vec3(0)).y);
                 debugColors.push_back(h.matPtr->tex->baseColor(0, 0, glm::vec3(0)).z);
 
+//                auto co = h.matPtr->tex->baseColor(h.u, h.v, h.hitPos);
+//                std::cout<<"h.hitMatBaseColor: "<<co.x<<" "<<co.y<<" "<<co.z<<std::endl;
+//                std::cout<<"albe: "<<albe.x<<" "<<albe.y<<" "<<albe.z<<std::endl;
 //                std::cout<<"r.pos: "<<r.pos.x<<" "<<r.pos.y<<" "<<r.pos.z<<std::endl;
 //                std::cout<<"r.direc: "<<r.direc.x<<" "<<r.direc.y<<" "<<r.direc.z<<std::endl;
 //                std::cout<<"h.hitNormal: "<<h.hitNormal.x<<" "<<h.hitNormal.y<<" "<<h.hitNormal.z<<std::endl;
 //                std::cout<<"h.hitOutDirec: "<<h.hitOutDirec.x<<" "<<h.hitOutDirec.y<<" "<<h.hitOutDirec.z<<std::endl<<std::endl;
             }
+
+            //if light
+            if(h.matPtr->isLight)
+            {
+                if(glm::dot(r.direc, h.hitNormal) < 0)
+                    return res * h.matPtr->tex->baseColor(h.u, h.v, h.hitPos);
+                else
+                    return glm::vec3{0, 0, 0};
+            }
+
+            //if glass
+            if(h.matPtr->type == materialType::dielectrics)
+            {
+                h.hitOutDirec = h.hitRefract;
+            }
+
+            glm::vec3 albe = h.matPtr->albedo(h, h.hitOutDirec, - r.direc) / h.hitPdf;
+            res *= albe;
+            r.pos = h.hitPos;
+            r.direc = h.hitOutDirec;
         }
         else
         {

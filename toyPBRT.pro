@@ -22,6 +22,7 @@ DEFINES += QT_DEPRECATED_WARNINGS
 INCLUDEPATH += /home/zdxiao/Desktop/GLM
 
 SOURCES += \
+    3rdparty/stb_image.cpp \
     accelerate/bvh.cpp \
     core/directionGenerator.cpp \
     core/primitiveList.cpp \
@@ -29,6 +30,7 @@ SOURCES += \
     debugger/ogldebugwindow.cpp \
     main.cpp \
     mainwindow.cpp \
+    materials/dielectricMaterial.cpp \
     materials/disneybrdfmaterial.cpp \
     materials/simplematerial.cpp \
     modelLoader/objloader.cpp \
@@ -37,9 +39,11 @@ SOURCES += \
     primitive/rectangle.cpp \
     primitive/sphere.cpp \
     primitive/triangle.cpp \
-    testScenes/cornellbox.cpp
+    testScenes/cornellbox.cpp \
+    testScenes/glassBunny.cpp
 
 HEADERS += \
+    3rdparty/stb_image.h \
     3rdparty/tiny_obj_loader.h \
     accelerate/bvh.h \
     camera/fovCamera.h \
@@ -48,6 +52,7 @@ HEADERS += \
     core/baseStructure.h \
     core/cameraBase.h \
     core/directionGenerator.h \
+    core/hitRecord.h \
     core/materialBase.h \
     core/onb.h \
     core/pdfBase.h \
@@ -58,6 +63,7 @@ HEADERS += \
     debugger/ogldebugwindow.h \
     debugger/raytracer.h \
     mainwindow.h \
+    materials/dielectricMaterial.h \
     materials/disneybrdfmaterial.h \
     materials/simplematerial.h \
     modelLoader/objloader.h \
@@ -70,7 +76,8 @@ HEADERS += \
     primitive/rectangle.h \
     primitive/sphere.h \
     primitive/triangle.h \
-    testScenes/cornellbox.h
+    testScenes/cornellbox.h \
+    testScenes/glassBunny.h
 
 FORMS += \
     mainwindow.ui

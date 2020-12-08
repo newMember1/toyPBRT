@@ -10,6 +10,7 @@
 #include "./materials/disneybrdfmaterial.h"
 #include "./materials/simplematerial.h"
 #include "./testScenes/cornellbox.h"
+#include "./testScenes/glassBunny.h"
 
 bool debugFlag=false;
 MainWindow::MainWindow(QWidget *parent)
@@ -38,14 +39,14 @@ void MainWindow::initPBRTResource()
     this->img=nullptr;
 
     //config scene
-    auto cornellBoxObjects = cornellBox::getInstance().getAllObjects();
-    auto scenesData = cornellBoxObjects;
+    //auto cornellBoxObjects = cornellBox::getInstance().getAllObjects();
+    auto disneyCornellBoxObjects = glassBunny::getInstance().getAllObjects();
 
-    this->scenes.reset(new scene(cornellBoxObjects));
+    this->scenes.reset(new scene(disneyCornellBoxObjects));
 
     //connect signal
     connect(ui->renderBotton,&QPushButton::clicked,this,&MainWindow::render);
-    connect(ui->radioButton_multiThread,&QRadioButton::clicked,this,&MainWindow::enableMultiThreads);
+    connect(ui->checkBox_multiThread,&QCheckBox::clicked,this,&MainWindow::enableMultiThreads);
     connect(ui->actionTraceRays, SIGNAL(triggered(bool)), this, SLOT(setShowDebugRay(bool)));
     connect(ui->colorIter, SIGNAL(clicked(bool)), this, SLOT(setColorMode()));
     connect(ui->colorRec, SIGNAL(clicked(bool)), this, SLOT(setColorMode()));
@@ -56,7 +57,7 @@ void MainWindow::initPBRTResource()
 
 void MainWindow::enableMultiThreads()
 {
-    if(this->ui->radioButton_multiThread->isChecked())
+    if(this->ui->checkBox_multiThread->isChecked())
         this->multiThreads=true;
     else
         this->multiThreads=false;
@@ -151,7 +152,7 @@ void MainWindow::render()
                 glm::vec3 c(0);
                 for(int k = 0; k < ns; ++k)
                 {
-                    if(i == 41 &&j == 42 && k==1)
+                    if(i == 30 && j == 89 && k == 0)
                         debugFlag=true;
                     else
                         debugFlag=false;
@@ -160,8 +161,8 @@ void MainWindow::render()
                 }
                 c /= ns;
                 c = sqrt(c);
+                c = glm::clamp(c, glm::vec3(0), glm::vec3(1.0f));
                 c *= 255.99;
-                glm::clamp(c, glm::vec3(0), glm::vec3(1.0f));
                 pixels[j + (nx - 1 - i) * ny] = c;
             }
         }
@@ -231,8 +232,8 @@ void MainWindow::renderParallel(std::unique_ptr<cameraBase> &cam, std::unique_pt
             }
             c /= ns;
             c = sqrt(c);
+            c = glm::clamp(c, glm::vec3(0), glm::vec3(1.0f));
             c *= 255.99;
-            glm::clamp(c, glm::vec3(0), glm::vec3(1.0f));
             pixels[j + (nx - 1 - i) * ny] = c;
             bools[j + (nx - 1 - i) * ny] = true;
         }

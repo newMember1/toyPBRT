@@ -1,7 +1,7 @@
 #ifndef SPHERE_H
 #define SPHERE_H
-#include"./core/primitiveBase.h"
-
+#include "./core/primitiveBase.h"
+#include "./core/directionGenerator.h"
 class sphere: public primitiveBase
 {
 public:

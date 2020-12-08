@@ -129,6 +129,7 @@ void rectangle::setModelMatrix(const glm::mat4 &m)
     modelMatrix = m;
     invModelMatrix = glm::inverse(modelMatrix);
 }
+
 bool rectangle::rayRect(ray &r, float &u, float &v, float &t)
 {
     //adapt from Moller-triangle algorithm
@@ -180,10 +181,15 @@ bool rectangle::hit(ray &r, hitRecord &h, float minT, float maxT)
     if(rayRect(r, u, v, t) && t > minT && t < maxT && t < h.t)
     {
         h.t = t;
+        h.u = u;
+        h.v = v;
         h.hitPos = r.pos + t * r.direc;
         h.hitNormal = normal(h.hitPos);
+        h.hitReflect = reflect(r.direc, normal(h.hitPos));
+        if(! refract(r.direc, normal(h.hitPos), mat->niOverNt, h.hitRefract))
+            h.hitRefract = h.hitReflect;
+
         h.hitOutDirec = directionGenerator::getInstance().generate(h.hitPos, h.hitNormal);
-        h.hitOutDirec = glm::normalize(h.hitOutDirec);
         h.hitPdf = directionGenerator::getInstance().value(h.hitOutDirec);
         h.matPtr = this->mat;
 
