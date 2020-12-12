@@ -27,15 +27,20 @@ bool sphere::hit(ray &r, hitRecord &h, float minT, float maxT)
         return false;
     else
     {
-        float t=(-b-sqrt(dis))/2.0/a;
-        if(t>minT&&t<maxT&&t<h.t)
+        float t = (-b - sqrt(dis)) / 2.0 / a;
+        if(t>minT && t<maxT && t<h.t)
         {
-            h.t=t;
-            h.hitPos=r.pos+t*r.direc;
-            h.hitNormal=this->normal(h.hitPos);
+            h.t = t;
+            h.hitPos = r.pos + t * r.direc;
+            h.hitNormal = this->normal(h.hitPos);
+            h.hitReflect = reflect(r.direc, h.hitNormal);
+            if(! refract(r.direc, normal(h.hitPos), mat->niOverNt, h.hitRefract))
+                h.hitRefract = h.hitReflect;
 
-            h.hitOutDirec=this->reflect(r.direc,h.hitNormal);
-            h.matPtr=this->mat;
+            h.hitOutDirec = directionGenerator::getInstance().generate(h.hitPos, h.hitNormal);
+            h.hitPdf = directionGenerator::getInstance().value(h.hitOutDirec);
+
+            h.matPtr = this->mat;
             return true;
         }
         else

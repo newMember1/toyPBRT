@@ -25,6 +25,19 @@ public:
     virtual void setRotate(const glm::vec3 & rotateAxis, float angle) = 0;
     virtual void setModelMatrix(const glm::mat4 & m) = 0;
 
+    bool refract(const glm::vec3 & v, const glm::vec3 & n, float niOvernt, glm::vec3 & refracted)
+    {
+        float dt = glm::dot(v, n);
+        float dis = 1.0 - niOvernt * niOvernt * (1 - dt * dt);
+        if(dis > 0)
+        {
+            refracted = niOvernt * (v - n * dt) - n * (float)sqrt(dis);
+            return true;
+        }
+        else
+            return false;
+    }
+
     aabb aabbBox;
     std::shared_ptr<materialBase> mat=nullptr;
     glm::mat4 modelMatrix {1,0,0,0,
@@ -32,6 +45,7 @@ public:
                            0,0,1,0,
                            0,0,0,1};
     glm::mat4 invModelMatrix = glm::inverse(modelMatrix);
+
 private:
     primitiveBase(){}
 };

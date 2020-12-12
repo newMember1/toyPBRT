@@ -49,7 +49,7 @@ triangle::triangle(const glm::vec3 &a,const glm::vec3 &b,const glm::vec3 &c,std:
 
 glm::vec3 triangle::normal(const glm::vec3 &surPos)
 {
-    return n;
+    return glm::normalize(n);
 }
 
 glm::vec3 triangle::reflect(const glm::vec3 &inDirec, const glm::vec3 &normal)
@@ -168,15 +168,19 @@ bool triangle::hit(ray &r, hitRecord &h, float minT, float maxT)
     float u,v,t;
     if(rayTriangle(r,u,v,t)&&t>minT&&t<maxT&&t<h.t)
     {
-        h.t=t;
-        h.hitPos=r.pos+t*r.direc;
-        h.hitNormal=this->normal(h.hitPos);
-        if(glm::dot(r.direc, h.hitNormal) > 0)
-            h.hitNormal = -h.hitNormal;
+        h.t = t;
+        h.u = u;
+        h.v = v;
+        h.hitPos = r.pos + t * r.direc;
+        h.hitNormal = normal(h.hitPos);
+        h.hitReflect = reflect(r.direc, h.hitNormal);
+        if(! refract(r.direc, normal(h.hitPos), mat->niOverNt, h.hitRefract))
+            h.hitRefract = h.hitReflect;
 
         h.hitOutDirec = directionGenerator::getInstance().generate(h.hitPos, h.hitNormal);
         h.hitPdf = directionGenerator::getInstance().value(h.hitOutDirec);
         h.matPtr = this->mat;
+
         return true;
     }
     else

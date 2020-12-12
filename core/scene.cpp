@@ -105,26 +105,26 @@ void scene::loadMatrials(std::string path)
 {
     std::cout<<"loadMaterials."<<std::endl;
 
-    auto red = std::make_shared<simpleMaterial>(textures["redTex"]);
-    auto redBase = std::dynamic_pointer_cast<materialBase>(std::move(red));
-    materials["redMat"] = redBase;
+//    auto red = std::make_shared<simpleMaterial>(textures["redTex"]);
+//    auto redBase = std::dynamic_pointer_cast<materialBase>(std::move(red));
+//    materials["redMat"] = redBase;
 
-    auto green = std::make_shared<simpleMaterial>(textures["greenTex"]);
-    auto greenBase = std::dynamic_pointer_cast<materialBase>(std::move(green));
-    materials["greenMat"] = greenBase;
+//    auto green = std::make_shared<simpleMaterial>(textures["greenTex"]);
+//    auto greenBase = std::dynamic_pointer_cast<materialBase>(std::move(green));
+//    materials["greenMat"] = greenBase;
 
-    auto blue = std::make_shared<simpleMaterial>(textures["blueTex"]);
-    auto blueBase = std::dynamic_pointer_cast<materialBase>(std::move(blue));
-    materials["blueMat"] = blueBase;
+//    auto blue = std::make_shared<simpleMaterial>(textures["blueTex"]);
+//    auto blueBase = std::dynamic_pointer_cast<materialBase>(std::move(blue));
+//    materials["blueMat"] = blueBase;
 
-    auto gold = std::make_shared<simpleMaterial>(textures["goldTex"]);
-    auto goldBase = std::dynamic_pointer_cast<materialBase>(std::move(gold));
-    materials["goldMat"] = goldBase;
+//    auto gold = std::make_shared<simpleMaterial>(textures["goldTex"]);
+//    auto goldBase = std::dynamic_pointer_cast<materialBase>(std::move(gold));
+//    materials["goldMat"] = goldBase;
 
-    auto whiteLight = std::make_shared<simpleMaterial>(textures["whiteTex"]);
-    auto whiteLightBase = std::dynamic_pointer_cast<materialBase>(std::move(whiteLight));
-    whiteLightBase->isLight = true;
-    materials["whiteLightMat"] = whiteLightBase;
+//    auto whiteLight = std::make_shared<simpleMaterial>(textures["whiteTex"]);
+//    auto whiteLightBase = std::dynamic_pointer_cast<materialBase>(std::move(whiteLight));
+//    whiteLightBase->isLight = true;
+//    materials["whiteLightMat"] = whiteLightBase;
 
     std::cout<<"loadMaterials done."<<std::endl<<std::endl;
 }

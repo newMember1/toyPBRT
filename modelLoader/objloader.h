@@ -1,13 +1,14 @@
 #ifndef OBJLOADER_H
 #define OBJLOADER_H
 #define TINYOBJLOADER_IMPLEMENTATION
-#include"../core/baseStructure.h"
-#include<vector>
-#include<unordered_map>
-#include<map>
-#include<istream>
-#include<fstream>
-#include<sstream>
+#include "../core/baseStructure.h"
+#include "../core/materialBase.h"
+#include <vector>
+#include <unordered_map>
+#include <map>
+#include <istream>
+#include <fstream>
+#include <sstream>
 
 struct HashFunc
 {

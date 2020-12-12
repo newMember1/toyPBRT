@@ -14,7 +14,6 @@ static unsigned long long seed = 1;
 #define magic2 0xB16
 #define magic3 0x5DEECE66DLL
 
-class materialBase;
 inline void srand48(unsigned int i)
 {
     seed = (((long long int)i) << 16) | rand();
@@ -31,6 +30,7 @@ inline float pow2(float a)
 {
     return a*a;
 }
+
 inline float pow5(float a)
 {
     return pow2(a)*pow2(a)*a;
@@ -75,22 +75,10 @@ struct line
     }
 };
 
-struct hitRecord
+enum class materialType
 {
-    float t=1e6;
-
-    float u,v;
-    float hitPdf = 1;
-    glm::vec3 hitPos;
-    glm::vec3 hitNormal;
-    glm::vec3 hitOutDirec;
-    glm::vec3 hitReflect;
-
-    //a material pointer and anisotropy attributes
-    //default xAxis and yAxis
-    glm::vec3 xAxis=glm::vec3(0,1,0);
-    glm::vec3 yAxis=glm::vec3(1,0,0);
-    std::shared_ptr<materialBase> matPtr;
+    simpleMaterial,
+    dielectrics,
+    disneyBRDFMaterial
 };
-
 #endif // BASESTRUCTURE_H
