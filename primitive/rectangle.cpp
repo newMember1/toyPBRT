@@ -35,7 +35,7 @@ rectangle::rectangle(const glm::vec3 & _oriPos, const glm::vec3 & _wDirec, const
 
 glm::vec3 rectangle::normal(const glm::vec3 &surPos)
 {
-    return n;
+    return glm::normalize(n);
 }
 
 glm::vec3 rectangle::reflect(const glm::vec3 &inDirec, const glm::vec3 &normal)
@@ -185,7 +185,7 @@ bool rectangle::hit(ray &r, hitRecord &h, float minT, float maxT)
         h.v = v;
         h.hitPos = r.pos + t * r.direc;
         h.hitNormal = normal(h.hitPos);
-        h.hitReflect = reflect(r.direc, normal(h.hitPos));
+        h.hitReflect = reflect(r.direc, h.hitNormal);
         if(! refract(r.direc, normal(h.hitPos), mat->niOverNt, h.hitRefract))
             h.hitRefract = h.hitReflect;
 

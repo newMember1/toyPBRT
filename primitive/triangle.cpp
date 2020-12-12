@@ -172,8 +172,8 @@ bool triangle::hit(ray &r, hitRecord &h, float minT, float maxT)
         h.u = u;
         h.v = v;
         h.hitPos = r.pos + t * r.direc;
-        h.hitNormal = this->normal(h.hitPos);
-        h.hitReflect = reflect(r.direc, normal(h.hitPos));
+        h.hitNormal = normal(h.hitPos);
+        h.hitReflect = reflect(r.direc, h.hitNormal);
         if(! refract(r.direc, normal(h.hitPos), mat->niOverNt, h.hitRefract))
             h.hitRefract = h.hitReflect;
 
