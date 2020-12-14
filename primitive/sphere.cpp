@@ -32,15 +32,54 @@ bool sphere::hit(ray &r, hitRecord &h, float minT, float maxT)
         {
             h.t = t;
             h.hitPos = r.pos + t * r.direc;
+
             h.hitNormal = this->normal(h.hitPos);
-            h.hitReflect = reflect(r.direc, h.hitNormal);
-            if(! refract(r.direc, normal(h.hitPos), mat->niOverNt, h.hitRefract))
-                h.hitRefract = h.hitReflect;
-
+            h.hitReflect = reflect(r.direc, normal(h.hitPos));
             h.hitOutDirec = directionGenerator::getInstance().generate(h.hitPos, h.hitNormal);
-            h.hitPdf = directionGenerator::getInstance().value(h.hitOutDirec);
 
+            //for refract's calculate
+            if(mat->type == materialType::dielectrics)
+            {
+                glm::vec3 outNormal;
+                float niOverNt;
+                float reflectProb;
+                float cosine;
+
+                if(glm::dot(r.direc, h.hitNormal) > 0)
+                {
+                    outNormal = - h.hitNormal;
+                    niOverNt = mat->niOverNt;
+                    cosine = niOverNt * glm::dot(r.direc, h.hitNormal);
+                }
+                else
+                {
+                    outNormal = h.hitNormal;
+                    niOverNt = 1.0 / mat->niOverNt;
+                    cosine = -niOverNt * glm::dot(r.direc, h.hitNormal);
+                }
+
+                if(refract(r.direc, outNormal, niOverNt, h.hitRefract))
+                {
+                    reflectProb = schlick(cosine, niOverNt);
+                }
+                else
+                {
+                    h.hitRefract = h.hitReflect;
+                    reflectProb = 1.0;
+                }
+
+                //since we could only pick reflect ray or refrac ray, thus we random chose
+                if(drand48() < reflectProb)
+                    h.hitOutDirec = h.hitReflect;
+                else
+                    h.hitOutDirec = h.hitRefract;
+
+                h.hitOutDirec = h.hitRefract;
+            }
+
+            h.hitPdf = directionGenerator::getInstance().value(h.hitOutDirec);
             h.matPtr = this->mat;
+
             return true;
         }
         else
@@ -97,6 +136,12 @@ void sphere::setUniformScale(float s)
 void sphere::setNonUniformScale(const glm::vec3 &s)
 {
     std::cout<<"sphere setNonUniformScale not done..."<<std::endl;
+}
+
+void sphere::setModelMatrix(const glm::mat4 &m)
+{
+    modelMatrix = m;
+    invModelMatrix = glm::inverse(modelMatrix);
 }
 
 void sphere::handleMatrix()

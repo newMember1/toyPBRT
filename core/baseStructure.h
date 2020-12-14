@@ -36,6 +36,13 @@ inline float pow5(float a)
     return pow2(a)*pow2(a)*a;
 }
 
+inline float schlick(float cosine, float ref)
+{
+    float r0 = (1 - ref) / (1 + ref);
+    r0 = r0 * r0;
+    return r0 + (1 - r0) * pow((1 - cosine), 5);
+}
+
 struct ray
 {
     glm::vec3 pos;

@@ -16,6 +16,7 @@ public:
     void setRotate(const glm::vec3 &rotateAxis, float angle) override;
     void setUniformScale(float s) override;
     void setNonUniformScale(const glm::vec3 &s) override;
+    void setModelMatrix(const glm::mat4 &m) override;
 
 private:
     float radius;

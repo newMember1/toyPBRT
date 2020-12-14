@@ -73,10 +73,56 @@ glm::vec3 primitiveList::color(ray &r, int times)
 glm::vec3 primitiveList::colorHitTest(ray &r, int times)
 {
     hitRecord h;
-    if(hit(r,h,epslion,1e6))
-        return h.matPtr->tex->baseColor(h.u, h.v, h.hitPos);
+    if(debugFlag)
+    {
+        debugVertices.push_back(r.pos.x);
+        debugVertices.push_back(r.pos.y);
+        debugVertices.push_back(r.pos.z);
+
+        debugColors.push_back(0);
+        debugColors.push_back(0);
+        debugColors.push_back(0);
+    }
+
+    if(hit(r,h,0.001,1e6))
+    {
+        if(debugFlag)
+        {
+            debugVertices.push_back(h.hitPos.x);
+            debugVertices.push_back(h.hitPos.y);
+            debugVertices.push_back(h.hitPos.z);
+
+            debugColors.push_back(h.matPtr->tex->baseColor(0, 0, glm::vec3(0)).x);
+            debugColors.push_back(h.matPtr->tex->baseColor(0, 0, glm::vec3(0)).y);
+            debugColors.push_back(h.matPtr->tex->baseColor(0, 0, glm::vec3(0)).z);
+        }
+
+        if(times>MAX_TRACE_TIMES)
+            return glm::vec3(0);
+
+        //notice that ray.indirec means the -outDirec in brdf and outDirec
+        glm::vec3 albe=h.matPtr->albedo(h,h.hitOutDirec,-r.direc);
+        r.pos=h.hitPos;
+        r.direc=h.hitOutDirec;
+
+        return albe*colorHitTest(r,times+1);
+    }
     else
-        return glm::vec3(0);
+    {
+        if(debugFlag)
+        {
+            debugVertices.push_back(h.hitPos.x + h.hitOutDirec.x * 700);
+            debugVertices.push_back(h.hitPos.y + h.hitOutDirec.y * 700);
+            debugVertices.push_back(h.hitPos.z + h.hitOutDirec.z * 700);
+
+            debugColors.push_back(0);
+            debugColors.push_back(0);
+            debugColors.push_back(0);
+        }
+        glm::vec3 uDirec = glm::normalize(r.direc);
+        float t = 0.5f * (uDirec.y + 1.0f);
+        return (1.0f - t) * glm::vec3(1.0f) + t * glm::vec3(0.5f, 0.7f, 1.0f);
+    }
 }
 
 glm::vec3 primitiveList::colorNormalVis(ray &r, int times)

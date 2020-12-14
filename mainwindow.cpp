@@ -11,6 +11,8 @@
 #include "./materials/simplematerial.h"
 #include "./testScenes/cornellbox.h"
 #include "./testScenes/glassBunny.h"
+#include "./testScenes/spherescene.h"
+#include "./testScenes/refractcheck.h"
 
 bool debugFlag=false;
 MainWindow::MainWindow(QWidget *parent)
@@ -40,9 +42,10 @@ void MainWindow::initPBRTResource()
 
     //config scene
     //auto cornellBoxObjects = cornellBox::getInstance().getAllObjects();
-    auto disneyCornellBoxObjects = glassBunny::getInstance().getAllObjects();
-
-    this->scenes.reset(new scene(disneyCornellBoxObjects));
+    //auto cornellBoxBunny = glassBunny::getInstance().getAllObjects();
+    //auto sphereObjects = sphereScene::getInstance().getAllObjects();
+    auto refractCheckObjects = refractCheck::getInstance().getAllObjects();
+    this->scenes.reset(new scene(refractCheckObjects));
 
     //connect signal
     connect(ui->renderBotton,&QPushButton::clicked,this,&MainWindow::render);
@@ -87,7 +90,7 @@ void MainWindow::render()
     int ns=ui->spinBox_ns->value();
 
     cam.reset(new fovCamera(glm::vec3(278, 278, -800), glm::vec3(278, 278, 0), 40.0, 1.0, nx, ny));
-
+    cam.reset(new fovCamera(glm::vec3(0, 0, 3), glm::vec3(0, 0, 0), 45, 1, nx, ny));
     img.reset(new QImage(nx,ny,QImage::Format_RGB32));
     ray r(glm::vec3(0.0f),glm::vec3(1.0f));
 
@@ -152,7 +155,7 @@ void MainWindow::render()
                 glm::vec3 c(0);
                 for(int k = 0; k < ns; ++k)
                 {
-                    if(i == 30 && j == 89 && k == 0)
+                    if(i == 50 && j == 50 && k == 0)
                         debugFlag=true;
                     else
                         debugFlag=false;

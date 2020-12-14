@@ -1,4 +1,5 @@
 #include "triangle.h"
+#include "../core/baseStructure.h"
 
 triangle::triangle(const glm::vec3 & a,const glm::vec3 & b,const glm::vec3 & c,const glm::vec3 & N,std::shared_ptr<materialBase> mat):
     primitiveBase(mat)
@@ -172,12 +173,51 @@ bool triangle::hit(ray &r, hitRecord &h, float minT, float maxT)
         h.u = u;
         h.v = v;
         h.hitPos = r.pos + t * r.direc;
-        h.hitNormal = normal(h.hitPos);
-        h.hitReflect = reflect(r.direc, h.hitNormal);
-        if(! refract(r.direc, normal(h.hitPos), mat->niOverNt, h.hitRefract))
-            h.hitRefract = h.hitReflect;
 
+        h.hitNormal = this->normal(h.hitPos);
+        h.hitReflect = reflect(r.direc, h.hitNormal);
         h.hitOutDirec = directionGenerator::getInstance().generate(h.hitPos, h.hitNormal);
+
+        //for refract's calculate
+        if(mat->type == materialType::dielectrics)
+        {
+            glm::vec3 outNormal;
+            float niOverNt;
+            float reflectProb;
+            float cosine;
+
+            if(glm::dot(r.direc, h.hitNormal) > 0)
+            {
+                outNormal = - h.hitNormal;
+                niOverNt = mat->niOverNt;
+                cosine = niOverNt * glm::dot(r.direc, h.hitNormal);
+            }
+            else
+            {
+                outNormal = h.hitNormal;
+                niOverNt = 1.0 / mat->niOverNt;
+                cosine = -niOverNt * glm::dot(r.direc, h.hitNormal);
+            }
+
+            if(refract(r.direc, outNormal, niOverNt, h.hitRefract))
+            {
+                reflectProb = schlick(cosine, niOverNt);
+            }
+            else
+            {
+                h.hitRefract = h.hitReflect;
+                reflectProb = 1.0;
+            }
+
+            //since we could only pick reflect ray or refrac ray, thus we random chose
+            if(drand48() < reflectProb)
+                h.hitOutDirec = h.hitReflect;
+            else
+                h.hitOutDirec = h.hitRefract;
+
+            h.hitOutDirec = h.hitRefract;
+        }
+
         h.hitPdf = directionGenerator::getInstance().value(h.hitOutDirec);
         h.matPtr = this->mat;
 
