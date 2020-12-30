@@ -7,7 +7,8 @@
 #include<iostream>
 
 const float PI=3.1415026;
-const float epslion=1e-4;
+const float epslion=1e-8;
+
 const int MAX_TRACE_TIMES = 20;
 static unsigned long long seed = 1;
 #define magic1 0x100000000LL
@@ -82,10 +83,19 @@ struct line
     }
 };
 
+enum class primitiveType
+{
+    triangle,
+    rectangle,
+    sphere,
+    unknown
+};
+
 enum class materialType
 {
     simpleMaterial,
     dielectrics,
+    basicBRDFMatrial,
     disneyBRDFMaterial
 };
 #endif // BASESTRUCTURE_H

@@ -4,6 +4,7 @@
 triangle::triangle(const glm::vec3 & a,const glm::vec3 & b,const glm::vec3 & c,const glm::vec3 & N,std::shared_ptr<materialBase> mat):
     primitiveBase(mat)
 {
+    pType = primitiveType::triangle;
     pa = a;
     pb = b;
     pc =c;
@@ -25,6 +26,7 @@ triangle::triangle(const glm::vec3 & a,const glm::vec3 & b,const glm::vec3 & c,c
 triangle::triangle(const glm::vec3 &a,const glm::vec3 &b,const glm::vec3 &c,std::shared_ptr<materialBase> _mat):
     primitiveBase(_mat)
 {
+    pType = primitiveType::triangle;
     pa = a;
     pb = b;
     pc = c;

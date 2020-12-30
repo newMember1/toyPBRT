@@ -6,6 +6,7 @@ extern bool debugFlag;
 sphere::sphere(float _r,glm::vec3 _center,std::shared_ptr<materialBase> _mat)
     :primitiveBase(_mat)
 {
+    pType = primitiveType::sphere;
     this->radius=_r;
     this->center=_center;
     this->aabbBox=aabb(this->center-glm::vec3(radius),
@@ -99,17 +100,48 @@ glm::vec3 sphere::reflect(const glm::vec3 &inDirec, const glm::vec3 &normal)
 
 std::vector<std::vector<float>> sphere::getModelLinesAndColors()
 {
-    std::vector<float> verts;
-    std::vector<float> colors;
-
-    std::cout<<"to do..."<<std::endl;
-    std::cout<<"finding ways to make sphere trianglization..."<<std::endl;
+    createFrame();
     return {verts, colors};
 }
 
 bool sphere::boxHit(const ray &r, float minT, float maxT)
 {
     return aabbBox.hit(r,minT,maxT);
+}
+
+void sphere::createFrame()
+{
+    if(verts.size() > 0)
+        return;
+
+    float XSEGMENT = 64;
+    float YSEGMENT = 64;
+    for(int j = 0; j < YSEGMENT; ++j)
+        for(int i = 0; i < XSEGMENT; ++i)
+        {
+            float x = (float)(i) / (float)(XSEGMENT);
+            float y = (float)(j) / (float)(YSEGMENT);
+            float xPos = cos(x * 2.0 * PI) * sin(y * PI) * radius + center.x;
+            float yPos = cos(y * PI) * radius + center.y;
+            float zPos = sin(x * 2.0 * PI) * sin(y * PI) * radius + center.z;
+
+            pushData(verts, xPos, yPos, zPos);
+            pushData(colors, this->mat->tex->baseColor(0, 0, glm::vec3(0)));
+        }
+}
+
+void sphere::pushData(std::vector<float> &v, const glm::vec3 &d)
+{
+    v.push_back(d.x);
+    v.push_back(d.y);
+    v.push_back(d.z);
+}
+
+void sphere::pushData(std::vector<float> &v, float a, float b, float c)
+{
+    v.push_back(a);
+    v.push_back(b);
+    v.push_back(c);
 }
 
 void sphere::setTranslate(const glm::vec3 &trans)
@@ -149,4 +181,9 @@ void sphere::handleMatrix()
     center = glm::vec3(modelMatrix * glm::vec4(center, 1.0));
     this->aabbBox=aabb(this->center-glm::vec3(radius),
                        this->center+glm::vec3(radius));
+}
+
+glm::vec3 sphere::getCenter()
+{
+    return center;
 }

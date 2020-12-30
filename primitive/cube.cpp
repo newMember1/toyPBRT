@@ -5,6 +5,7 @@ extern bool debugFlag;
 cube::cube(const glm::vec3 & _min, const glm::vec3 & _max, std::shared_ptr<materialBase> _mat)
     :primitiveBase(_mat)
 {
+    pType = primitiveType::unknown;
     auto min = _min;
     auto max = _max;
     this->aabbBox._min = min - glm::vec3(epslion);

@@ -6,26 +6,52 @@
 #include "../primitive/sphere.h"
 #include "../materials/simplematerial.h"
 #include "../materials/dielectricMaterial.h"
+#include "../materials/disneybrdfmaterial.h"
+#include "../materials/basicbrdfmaterial.h"
+#include "../camera/fovCamera.h"
 
 using std::unordered_map;
 using std::shared_ptr;
 using std::string;
 
-class sphereScene
+class disneyMatSpheres
 {
 public:
     void createTextures();
     void createMatrials();
     void createObjects();
 
-    static sphereScene & getInstance();
+    static disneyMatSpheres & getInstance();
+    std::shared_ptr<cameraBase> getCamera() { return cam; }
     unordered_map<std::string, shared_ptr<primitiveBase>> getAllObjects();
 private:
-    sphereScene();
+    std::vector<glm::vec3> lightPositions =
+    {
+        glm::vec3(-10.0f,  10.0f, 10.0f),
+        glm::vec3( 10.0f,  10.0f, 10.0f),
+        glm::vec3(-10.0f, -10.0f, 10.0f),
+        glm::vec3( 10.0f, -10.0f, 10.0f),
+    };
+
+    std::vector<glm::vec3> lightColors =
+    {
+        glm::vec3(50.0f, 50.0f, 50.0f),
+        glm::vec3(50.0f, 50.0f, 50.0f),
+        glm::vec3(50.0f, 50.0f, 50.0f),
+        glm::vec3(50.0f, 50.0f, 50.0f)
+    };
+
+    int nrRows = 7;
+    int nrColumns = 7;
+    float spacing = 2.5;
+
+    disneyMatSpheres();
 
     glm::vec3 x{1, 0, 0};
     glm::vec3 y{0, 1, 0};
     glm::vec3 z{0, 0, 1};
+
+    std::shared_ptr<cameraBase> cam;
 
     unordered_map<std::string, shared_ptr<texture>> textures;
     unordered_map<std::string, shared_ptr<materialBase>> materials;

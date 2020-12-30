@@ -54,7 +54,7 @@ void refractCheck::createObjects()
     auto ball3Base = std::dynamic_pointer_cast<primitiveBase>(ball3);
     objects["ball3"] = ball3Base;
 
-    auto ball4 = std::make_shared<sphere>(-0.45, glm::vec3(-1, 0, -1), glassMat);
+    auto ball4 = std::make_shared<sphere>(0.5, glm::vec3(1, 0, -1), greenMat);
     auto ball4Base = std::dynamic_pointer_cast<primitiveBase>(ball4);
     objects["ball4"] = ball4Base;
 }

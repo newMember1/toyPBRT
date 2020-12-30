@@ -30,6 +30,7 @@ SOURCES += \
     debugger/ogldebugwindow.cpp \
     main.cpp \
     mainwindow.cpp \
+    materials/basicbrdfmaterial.cpp \
     materials/dielectricMaterial.cpp \
     materials/disneybrdfmaterial.cpp \
     materials/simplematerial.cpp \
@@ -40,7 +41,9 @@ SOURCES += \
     primitive/sphere.cpp \
     primitive/triangle.cpp \
     testScenes/cornellbox.cpp \
-    testScenes/glassBunny.cpp
+    testScenes/disneyMatSpheres.cpp \
+    testScenes/glassBunny.cpp \
+    testScenes/refractcheck.cpp
 
 HEADERS += \
     3rdparty/stb_image.h \
@@ -63,6 +66,7 @@ HEADERS += \
     debugger/ogldebugwindow.h \
     debugger/raytracer.h \
     mainwindow.h \
+    materials/basicbrdfmaterial.h \
     materials/dielectricMaterial.h \
     materials/disneybrdfmaterial.h \
     materials/simplematerial.h \
@@ -71,13 +75,16 @@ HEADERS += \
     pdf/cosinePdf.h \
     pdf/randomPdf.h \
     pdf/rectLightPdf.h \
+    pdf/sphereLightPdf.h \
     primitive/cube.h \
     primitive/model.h \
     primitive/rectangle.h \
     primitive/sphere.h \
     primitive/triangle.h \
     testScenes/cornellbox.h \
-    testScenes/glassBunny.h
+    testScenes/disneyMatSpheres.h \
+    testScenes/glassBunny.h \
+    testScenes/refractcheck.h
 
 FORMS += \
     mainwindow.ui

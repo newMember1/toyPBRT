@@ -6,6 +6,7 @@ model::model(std::string path,std::shared_ptr<materialBase> _mat):primitiveBase(
     if(!objLoader::load(path,verts,vIndexs,normals,nIndexs))
         return;
 
+    pType = primitiveType::unknown;
     min = glm::vec3(1e6);
     max = glm::vec3(-1e6);
 

@@ -11,7 +11,7 @@
 #include "./materials/simplematerial.h"
 #include "./testScenes/cornellbox.h"
 #include "./testScenes/glassBunny.h"
-#include "./testScenes/spherescene.h"
+#include "./testScenes/disneyMatSpheres.h"
 #include "./testScenes/refractcheck.h"
 
 bool debugFlag=false;
@@ -43,13 +43,13 @@ void MainWindow::initPBRTResource()
     //config scene
     //auto cornellBoxObjects = cornellBox::getInstance().getAllObjects();
     //auto cornellBoxBunny = glassBunny::getInstance().getAllObjects();
-    //auto sphereObjects = sphereScene::getInstance().getAllObjects();
-    auto refractCheckObjects = refractCheck::getInstance().getAllObjects();
-    this->scenes.reset(new scene(refractCheckObjects));
+    auto sphereObjects = disneyMatSpheres::getInstance().getAllObjects();
+    //auto refractCheckObjects = refractCheck::getInstance().getAllObjects();
+    this->scenes.reset(new scene(sphereObjects));
 
     //connect signal
-    connect(ui->renderBotton,&QPushButton::clicked,this,&MainWindow::render);
-    connect(ui->checkBox_multiThread,&QCheckBox::clicked,this,&MainWindow::enableMultiThreads);
+    connect(ui->renderBotton, &QPushButton::clicked, this, &MainWindow::render);
+    connect(ui->checkBox_multiThread, &QCheckBox::clicked, this, &MainWindow::enableMultiThreads);
     connect(ui->actionTraceRays, SIGNAL(triggered(bool)), this, SLOT(setShowDebugRay(bool)));
     connect(ui->colorIter, SIGNAL(clicked(bool)), this, SLOT(setColorMode()));
     connect(ui->colorRec, SIGNAL(clicked(bool)), this, SLOT(setColorMode()));
@@ -164,8 +164,10 @@ void MainWindow::render()
                 }
                 c /= ns;
                 c = sqrt(c);
+                //std::cout<<"c is: "<<c.x<<" "<<c.y<<" "<<c.z<<std::endl;
                 c = glm::clamp(c, glm::vec3(0), glm::vec3(1.0f));
                 c *= 255.99;
+
                 pixels[j + (nx - 1 - i) * ny] = c;
             }
         }
