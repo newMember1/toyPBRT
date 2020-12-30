@@ -7,7 +7,8 @@
 #include<iostream>
 
 const float PI=3.1415026;
-const float epslion=1e-4;
+const float epslion=1e-8;
+
 const int MAX_TRACE_TIMES = 20;
 static unsigned long long seed = 1;
 #define magic1 0x100000000LL
@@ -34,6 +35,13 @@ inline float pow2(float a)
 inline float pow5(float a)
 {
     return pow2(a)*pow2(a)*a;
+}
+
+inline float schlick(float cosine, float ref)
+{
+    float r0 = (1 - ref) / (1 + ref);
+    r0 = r0 * r0;
+    return r0 + (1 - r0) * pow((1 - cosine), 5);
 }
 
 struct ray
@@ -75,10 +83,19 @@ struct line
     }
 };
 
+enum class primitiveType
+{
+    triangle,
+    rectangle,
+    sphere,
+    unknown
+};
+
 enum class materialType
 {
     simpleMaterial,
     dielectrics,
+    basicBRDFMatrial,
     disneyBRDFMaterial
 };
 #endif // BASESTRUCTURE_H

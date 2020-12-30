@@ -38,6 +38,8 @@ public:
             return false;
     }
 
+    primitiveType pType;
+
     aabb aabbBox;
     std::shared_ptr<materialBase> mat=nullptr;
     glm::mat4 modelMatrix {1,0,0,0,

@@ -23,6 +23,7 @@ protected:
 
     void mousePressEvent(QMouseEvent * event) override;
     void mouseMoveEvent(QMouseEvent * evnet) override;
+    void wheelEvent(QWheelEvent * event) override;
 
 private:
     bool refreshRayData = false;
@@ -34,6 +35,7 @@ private:
     void createBuffer();
     void printContextInformation();
 
+    void zoom(float delta);
     void rotateX(float radius);
     void rotateY(float radius);
     void setShaderModelMatrix();

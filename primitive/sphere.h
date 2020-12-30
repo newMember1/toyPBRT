@@ -16,8 +16,16 @@ public:
     void setRotate(const glm::vec3 &rotateAxis, float angle) override;
     void setUniformScale(float s) override;
     void setNonUniformScale(const glm::vec3 &s) override;
+    void setModelMatrix(const glm::mat4 &m) override;
 
+    glm::vec3 getCenter();
 private:
+    void createFrame();
+    void pushData(std::vector<float> & v, float a, float b, float c);
+    void pushData(std::vector<float> &v, const glm::vec3 & d);
+    std::vector<float> verts;
+    std::vector<float> colors;
+
     float radius;
     glm::vec3 center;
 };

@@ -9,6 +9,7 @@
 #include "primitive/model.h"
 #include "directionGenerator.h"
 #include "./pdf/rectLightPdf.h"
+#include "./pdf/sphereLightPdf.h"
 #include "primitiveList.h"
 
 #include "materials/simplematerial.h"

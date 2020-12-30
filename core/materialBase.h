@@ -18,7 +18,7 @@ public:
         this->tex=_tex;
     }
     virtual ~materialBase(){}
-    virtual glm::vec3 albedo(const hitRecord &hitRec,const glm::vec3 & inDirec,const glm::vec3 & outDirec)=0;
+    virtual glm::vec3 albedo(const hitRecord &hitRec,const glm::vec3 & lightDirec,const glm::vec3 & eyeDirec)=0;
 
     bool isLight=false;
     std::shared_ptr<texture> tex=nullptr;

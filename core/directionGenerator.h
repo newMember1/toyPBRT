@@ -15,20 +15,21 @@ class directionGenerator
 public:
     glm::vec3 generate(const glm::vec3 & surfPos, const glm::vec3 & surfNormal);
     float value(const glm::vec3 & direction);
-    void setLightPdf(shared_ptr<pdfBase> light);
     void setLightPdfs(unordered_map<string, shared_ptr<pdfBase>> lights);
 
     static directionGenerator & getInstance();
 
 private:
+    void randomChoseLight();
+    glm::vec3 generateProperDirection(const glm::vec3 & surfPos, const glm::vec3 & surfNormal);
     directionGenerator();
 
     bool diffuse;
-    std::unique_ptr<pdfBase> diffusePdf;
-    std::shared_ptr<pdfBase> lightPdf;
+    //current working lightPdf
+    std::shared_ptr<pdfBase> diffusePdf = nullptr;
+    std::shared_ptr<pdfBase> lightPdf = nullptr;
 
-    unordered_map<string, shared_ptr<pdfBase>> diffusePdfs;
-    unordered_map<string, shared_ptr<pdfBase>> lightPdfs;
+    std::vector<shared_ptr<pdfBase>> lightPdfs;
 };
 
 #endif // PDFGENERATE_H

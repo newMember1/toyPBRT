@@ -197,3 +197,4 @@ float disneyBRDFMaterial::smithG_GGX_aniso(float dotNV,float dotVX,float dotVY,f
 {
     return 1.0 / (dotNV + sqrt(pow(dotVX * ax, 2.0) + pow(dotVY * ay, 2.0) + pow(dotNV, 2.0)));
 }
+

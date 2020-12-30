@@ -6,6 +6,7 @@ extern bool debugFlag;
 rectangle::rectangle(const glm::vec3 & _oriPos, const glm::vec3 & _wDirec, const glm::vec3 & _hDirec, float _w, float _h, std::shared_ptr<materialBase> _mat)
     :primitiveBase(_mat)
 {
+    pType = primitiveType::rectangle;
     this->oriPos = _oriPos;
     this->wDirec = _wDirec;
     this->hDirec = _hDirec;
@@ -184,12 +185,32 @@ bool rectangle::hit(ray &r, hitRecord &h, float minT, float maxT)
         h.u = u;
         h.v = v;
         h.hitPos = r.pos + t * r.direc;
+
         h.hitNormal = normal(h.hitPos);
         h.hitReflect = reflect(r.direc, h.hitNormal);
-        if(! refract(r.direc, normal(h.hitPos), mat->niOverNt, h.hitRefract))
-            h.hitRefract = h.hitReflect;
-
         h.hitOutDirec = directionGenerator::getInstance().generate(h.hitPos, h.hitNormal);
+
+        //for refract's calculate
+        if(mat->type == materialType::dielectrics)
+        {
+            glm::vec3 outNormal;
+            float niOverNt;
+            if(glm::dot(r.direc, h.hitNormal) > 0)
+            {
+                outNormal = - h.hitNormal;
+                niOverNt = mat->niOverNt;
+            }
+            else
+            {
+                outNormal = h.hitNormal;
+                niOverNt = 1.0 / mat->niOverNt;
+            }
+            if(! refract(r.direc, outNormal, niOverNt, h.hitRefract))
+                h.hitRefract = h.hitReflect;
+
+            h.hitOutDirec = h.hitRefract;
+        }
+
         h.hitPdf = directionGenerator::getInstance().value(h.hitOutDirec);
         h.matPtr = this->mat;
 

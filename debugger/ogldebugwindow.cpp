@@ -121,6 +121,15 @@ void oglDebugWindow::rotateY(float radius)
     model = temp * model;
 }
 
+void oglDebugWindow::zoom(float delta)
+{
+    delta = delta / 200;
+    QMatrix4x4 temp;
+    QVector3D scale{1 + delta, 1 + delta, 1 + delta};
+    temp.scale(scale);
+    model = temp * model;
+}
+
 void oglDebugWindow::setShaderModelMatrix()
 {
     sceneProgram->bind();
@@ -141,6 +150,10 @@ void oglDebugWindow::mouseMoveEvent(QMouseEvent *event)
     rotateY(dx / 5.0);
 }
 
+void oglDebugWindow::wheelEvent(QWheelEvent *event)
+{
+    zoom(event->delta());
+}
 void oglDebugWindow::paintGL()
 {
     glClear(GL_COLOR_BUFFER_BIT);

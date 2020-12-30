@@ -11,6 +11,8 @@
 #include "./materials/simplematerial.h"
 #include "./testScenes/cornellbox.h"
 #include "./testScenes/glassBunny.h"
+#include "./testScenes/disneyMatSpheres.h"
+#include "./testScenes/refractcheck.h"
 
 bool debugFlag=false;
 MainWindow::MainWindow(QWidget *parent)
@@ -40,13 +42,14 @@ void MainWindow::initPBRTResource()
 
     //config scene
     //auto cornellBoxObjects = cornellBox::getInstance().getAllObjects();
-    auto disneyCornellBoxObjects = glassBunny::getInstance().getAllObjects();
-
-    this->scenes.reset(new scene(disneyCornellBoxObjects));
+    //auto cornellBoxBunny = glassBunny::getInstance().getAllObjects();
+    auto sphereObjects = disneyMatSpheres::getInstance().getAllObjects();
+    //auto refractCheckObjects = refractCheck::getInstance().getAllObjects();
+    this->scenes.reset(new scene(sphereObjects));
 
     //connect signal
-    connect(ui->renderBotton,&QPushButton::clicked,this,&MainWindow::render);
-    connect(ui->checkBox_multiThread,&QCheckBox::clicked,this,&MainWindow::enableMultiThreads);
+    connect(ui->renderBotton, &QPushButton::clicked, this, &MainWindow::render);
+    connect(ui->checkBox_multiThread, &QCheckBox::clicked, this, &MainWindow::enableMultiThreads);
     connect(ui->actionTraceRays, SIGNAL(triggered(bool)), this, SLOT(setShowDebugRay(bool)));
     connect(ui->colorIter, SIGNAL(clicked(bool)), this, SLOT(setColorMode()));
     connect(ui->colorRec, SIGNAL(clicked(bool)), this, SLOT(setColorMode()));
@@ -87,7 +90,7 @@ void MainWindow::render()
     int ns=ui->spinBox_ns->value();
 
     cam.reset(new fovCamera(glm::vec3(278, 278, -800), glm::vec3(278, 278, 0), 40.0, 1.0, nx, ny));
-
+    cam.reset(new fovCamera(glm::vec3(0, 0, 3), glm::vec3(0, 0, 0), 45, 1, nx, ny));
     img.reset(new QImage(nx,ny,QImage::Format_RGB32));
     ray r(glm::vec3(0.0f),glm::vec3(1.0f));
 
@@ -152,7 +155,7 @@ void MainWindow::render()
                 glm::vec3 c(0);
                 for(int k = 0; k < ns; ++k)
                 {
-                    if(i == 30 && j == 89 && k == 0)
+                    if(i == 50 && j == 50 && k == 0)
                         debugFlag=true;
                     else
                         debugFlag=false;
@@ -161,8 +164,10 @@ void MainWindow::render()
                 }
                 c /= ns;
                 c = sqrt(c);
+                //std::cout<<"c is: "<<c.x<<" "<<c.y<<" "<<c.z<<std::endl;
                 c = glm::clamp(c, glm::vec3(0), glm::vec3(1.0f));
                 c *= 255.99;
+
                 pixels[j + (nx - 1 - i) * ny] = c;
             }
         }
