@@ -1,4 +1,5 @@
 #include "disneyMatSpheres.h"
+#include <string>
 
 disneyMatSpheres::disneyMatSpheres()
 {

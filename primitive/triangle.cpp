@@ -1,6 +1,6 @@
 #include "triangle.h"
 #include "../core/baseStructure.h"
-
+#include <algorithm>
 triangle::triangle(const glm::vec3 & a,const glm::vec3 & b,const glm::vec3 & c,const glm::vec3 & N,std::shared_ptr<materialBase> mat):
     primitiveBase(mat)
 {

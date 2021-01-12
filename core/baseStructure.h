@@ -2,8 +2,8 @@
 #ifndef BASESTRUCTURE_H
 #define BASESTRUCTURE_H
 #include<memory>
-#include<glm.hpp>
-#include<gtc/matrix_transform.hpp>
+#include<3rdparty/glm/glm.hpp>
+#include<3rdparty/glm/gtc/matrix_transform.hpp>
 #include<iostream>
 
 const float PI=3.1415026;

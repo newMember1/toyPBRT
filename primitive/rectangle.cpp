@@ -1,6 +1,6 @@
 #include "rectangle.h"
 #include "core/directionGenerator.h"
-
+#include <algorithm>
 extern bool debugFlag;
 
 rectangle::rectangle(const glm::vec3 & _oriPos, const glm::vec3 & _wDirec, const glm::vec3 & _hDirec, float _w, float _h, std::shared_ptr<materialBase> _mat)

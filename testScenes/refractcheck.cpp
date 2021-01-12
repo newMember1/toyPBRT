@@ -1,5 +1,5 @@
 #include "refractcheck.h"
-
+#include <string>
 refractCheck::refractCheck()
 {
     createTextures();
