@@ -1,8 +1,9 @@
 #ifndef BASICBRDFMATERIAL_H
 #define BASICBRDFMATERIAL_H
-
+#include <vector>
 #include "../core/materialBase.h"
 
+using namespace glm;
 class basicBRDFMaterial : public materialBase
 {
 public:
@@ -12,26 +13,32 @@ public:
     void setMetallic(float m);
     void setRoughness(float r);
     glm::vec3 albedo(const hitRecord &hitRec, const glm::vec3 &lightDirec, const glm::vec3 &eyeDirec) override;
+	glm::vec3 albedo4Lights(const hitRecord & hitRec, const glm::vec3 & lightDirec, const glm::vec3 & eyeDirec);
 private:
-    float D();
-    glm::vec3 F(float a);
-    float G();
-    float GSub(float a);
+	vec3 fresnelSchlick(float cosTheta, vec3 F0);
+
+	float DistributionGGX(vec3 N, vec3 H, float roughness);
+	float GeometrySchlickGGX(float NdotV, float roughness);
+	float GeometrySmith(vec3 N, vec3 V, vec3 L, float roughness);
 
     float metallic = 0;
     float roughness = 0;
 
-    float NdotH;
-    float NdotL;
-    float NdotV;
-    float LdotH;
+	std::vector<glm::vec3> lightPositions =
+	{
+		glm::vec3(-10.0f,  10.0f, 10.0f),
+		glm::vec3(10.0f,  10.0f, 10.0f),
+		glm::vec3(-10.0f, -10.0f, 10.0f),
+		glm::vec3(10.0f, -10.0f, 10.0f),
+	};
 
-    glm::vec3 F0{0.04f};
-
-    float pow5(float a)
-    {
-        return a * a * a * a *a;
-    }
+	std::vector<glm::vec3> lightColors =
+	{
+		glm::vec3(300.0f, 300.0f, 300.0f),
+		glm::vec3(300.0f, 300.0f, 300.0f),
+		glm::vec3(300.0f, 300.0f, 300.0f),
+		glm::vec3(300.0f, 300.0f, 300.0f)
+	};
 };
 
 #endif // BASICBRDFMATERIAL_H

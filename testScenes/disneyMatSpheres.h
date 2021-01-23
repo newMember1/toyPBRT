@@ -35,10 +35,10 @@ private:
 
     std::vector<glm::vec3> lightColors =
     {
-        glm::vec3(50.0f, 50.0f, 50.0f),
-        glm::vec3(50.0f, 50.0f, 50.0f),
-        glm::vec3(50.0f, 50.0f, 50.0f),
-        glm::vec3(50.0f, 50.0f, 50.0f)
+        glm::vec3(300.0f, 300.0f, 300.0f),
+        glm::vec3(300.0f, 300.0f, 300.0f),
+        glm::vec3(300.0f, 300.0f, 300.0f),
+        glm::vec3(300.0f, 300.0f, 300.0f)
     };
 
     int nrRows = 7;

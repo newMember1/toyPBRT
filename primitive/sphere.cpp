@@ -33,6 +33,33 @@ bool sphere::hit(ray &r, hitRecord &h, float minT, float maxT)
         {
             h.t = t;
             h.hitPos = r.pos + t * r.direc;
+			if (abs(h.hitPos.x + 0.680195) < 0.00001 && abs(h.hitPos.y + 0.804823) < 0.00001 && abs(h.hitPos.z + 0.495047) < 0.00001)
+			{
+				std::cout << "r.pos: " << r.pos.x << " " << r.pos.y << " " << r.pos.z << std::endl;
+				std::cout << "r.direc: " << r.direc.x << " " << r.direc.y << " " << r.direc.z << std::endl;
+				std::cout << "h.hitPos: " << h.hitPos.x << " " << h.hitPos.y << " " << h.hitPos.z << std::endl;
+				std::cout << "h.hitNormal: " << h.hitNormal.x << " " << h.hitNormal.y << " " << h.hitNormal.z << std::endl;
+				std::cout << "h.hitOutDirec: " << h.hitOutDirec.x << " " << h.hitOutDirec.y << " " << h.hitOutDirec.z << std::endl;
+				std::cout << "first hit here" << std::endl;
+			}
+			if (abs(h.hitPos.x + 0.631529) < 0.00001 && abs(h.hitPos.y + 0.755589) < 0.00001 && abs(h.hitPos.z + 0.447224) < 0.00001)
+			{
+				std::cout << "r.pos: " << r.pos.x << " " << r.pos.y << " " << r.pos.z << std::endl;
+				std::cout << "r.direc: " << r.direc.x << " " << r.direc.y << " " << r.direc.z << std::endl;
+				std::cout << "h.hitPos: " << h.hitPos.x << " " << h.hitPos.y << " " << h.hitPos.z << std::endl;
+				std::cout << "h.hitNormal: " << h.hitNormal.x << " " << h.hitNormal.y << " " << h.hitNormal.z << std::endl;
+				std::cout << "h.hitOutDirec: " << h.hitOutDirec.x << " " << h.hitOutDirec.y << " " << h.hitOutDirec.z << std::endl;
+				std::cout << "second hit here" << std::endl;
+			}
+			if (abs(h.hitPos.x + 9.94699) < 0.00001 && abs(h.hitPos.y - 9.93914) < 0.00001 && abs(h.hitPos.z - 9.94088) < 0.00001)
+			{
+				std::cout << "r.pos: " << r.pos.x << " " << r.pos.y << " " << r.pos.z << std::endl;
+				std::cout << "r.direc: " << r.direc.x << " " << r.direc.y << " " << r.direc.z << std::endl;
+				std::cout << "h.hitPos: " << h.hitPos.x << " " << h.hitPos.y << " " << h.hitPos.z << std::endl;
+				std::cout << "h.hitNormal: " << h.hitNormal.x << " " << h.hitNormal.y << " " << h.hitNormal.z << std::endl;
+				std::cout << "h.hitOutDirec: " << h.hitOutDirec.x << " " << h.hitOutDirec.y << " " << h.hitOutDirec.z << std::endl;
+				std::cout << "third hit here" << std::endl;
+			}
 
             h.hitNormal = this->normal(h.hitPos);
             h.hitReflect = reflect(r.direc, normal(h.hitPos));

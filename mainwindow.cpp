@@ -155,15 +155,21 @@ void MainWindow::render()
                 glm::vec3 c(0);
                 for(int k = 0; k < ns; ++k)
                 {
-                    if(i == 50 && j == 50 && k == 0)
-                        debugFlag=true;
+                    /*if(i == 50 && j == 50 && k == 0)
+                        debugFlag=true; 
                     else
-                        debugFlag=false;
+                        debugFlag=false;*/
                     cam->emitRay(j,i,r);
-                    c += scenes->getLists()->color(r,0);
+					if (abs(r.direc.x + 0.186332) < 0.00001 && abs(r.direc.y + 0.220472) < 0.00001 && abs(r.direc.z + 0.95743) < 0.00001)
+						debugFlag = true;
+					else
+						debugFlag = false;
+                    glm::vec3 tmp = scenes->getLists()->color(r,0);
+					tmp = tmp / (tmp + vec3(1.0f));
+					tmp = pow(tmp, vec3(1.0f / 2.2));
+					c += tmp;
                 }
                 c /= ns;
-                c = sqrt(c);
                 //std::cout<<"c is: "<<c.x<<" "<<c.y<<" "<<c.z<<std::endl;
                 c = glm::clamp(c, glm::vec3(0), glm::vec3(1.0f));
                 c *= 255.99;
