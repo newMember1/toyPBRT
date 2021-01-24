@@ -13,7 +13,6 @@ public:
     void setMetallic(float m);
     void setRoughness(float r);
     glm::vec3 albedo(const hitRecord &hitRec, const glm::vec3 &lightDirec, const glm::vec3 &eyeDirec) override;
-	glm::vec3 albedo4Lights(const hitRecord & hitRec, const glm::vec3 & lightDirec, const glm::vec3 & eyeDirec);
 private:
 	vec3 fresnelSchlick(float cosTheta, vec3 F0);
 

@@ -20,7 +20,7 @@ basicBRDFMaterial::basicBRDFMaterial(std::shared_ptr<texture> texture, float m, 
     roughness = r;
 }
 
-glm::vec3 basicBRDFMaterial::albedo4Lights(const hitRecord &hitRec, const glm::vec3 &lightDirec, const glm::vec3 &eyeDirec)
+glm::vec3 basicBRDFMaterial::albedo(const hitRecord &hitRec, const glm::vec3 &lightDirec, const glm::vec3 &eyeDirec)
 {
 	// ref:learnopengl-cn : radiance
 	vec3 baseColor = tex->baseColor(hitRec.u, hitRec.v, hitRec.hitPos);
@@ -71,49 +71,6 @@ glm::vec3 basicBRDFMaterial::albedo4Lights(const hitRecord &hitRec, const glm::v
 	}
 	vec3 color =  Lo;
 	return color;
-}
-
-glm::vec3 basicBRDFMaterial::albedo(const hitRecord &hitRec, const glm::vec3 &lightDirec, const glm::vec3 &eyeDirec)
-{
-	return albedo4Lights(hitRec, lightDirec, eyeDirec);
-	vec3 baseColor = tex->baseColor(hitRec.u, hitRec.v, hitRec.hitPos);
-	vec3 N = normalize(hitRec.hitNormal);
-	vec3 V = normalize(eyeDirec);
-	vec3 L = normalize(lightDirec);
-	vec3 H = normalize(V + L);
-
-	// calculate reflectance at normal incidence; if dia-electric (like plastic) use F0 
-	// of 0.04 and if it's a metal, use the albedo color as F0 (metallic workflow)    
-	vec3 F0 = vec3(0.04);
-	F0 = mix(F0, baseColor, metallic);
-
-	// reflectance equation
-	vec3 Lo = vec3(0.0);
-
-	// calculate per-light radiance
-	float distance = hitRec.t;
-	float attenuation = 1.0 / (distance * distance) / 6;
-	vec3 radiance = vec3(attenuation);
-
-	// Cook-Torrance BRDF
-	float NDF = DistributionGGX(N, H, roughness);
-	float G = GeometrySmith(N, V, L, roughness);
-	vec3 F = fresnelSchlick(clamp(dot(H, V), 0.0f, 1.0f), F0);
-
-	vec3 nominator = NDF * G * F;
-	float denominator = 4 * max(dot(N, V), 0.0f) * max(dot(N, L), 0.0f);
-	vec3 specular = nominator / max(denominator, 0.001f); // prevent divide by zero for NdotV=0.0 or NdotL=0.0
-
-	// kS is equal to Fresnel
-	vec3 kS = F;
-	vec3 kD = vec3(1.0) - kS;
-	kD *= 1.0 - metallic;
-
-	// scale light by NdotL
-	float NdotL = max(dot(N, L), 0.0f);
-
-	// add to outgoing radiance Lo
-	return (kD * baseColor / PI + specular) * radiance * NdotL;
 }
 
 void basicBRDFMaterial::setMetallic(float m)

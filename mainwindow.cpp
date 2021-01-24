@@ -170,7 +170,6 @@ void MainWindow::render()
 					c += tmp;
                 }
                 c /= ns;
-                //std::cout<<"c is: "<<c.x<<" "<<c.y<<" "<<c.z<<std::endl;
                 c = glm::clamp(c, glm::vec3(0), glm::vec3(1.0f));
                 c *= 255.99;
 

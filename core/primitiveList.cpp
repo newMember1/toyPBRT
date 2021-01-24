@@ -202,13 +202,13 @@ glm::vec3 primitiveList::colorIterator(ray &r, int times)
                 debugColors.push_back(h.matPtr->tex->baseColor(0, 0, glm::vec3(0)).y);
                 debugColors.push_back(h.matPtr->tex->baseColor(0, 0, glm::vec3(0)).z);
 
-                auto co = h.matPtr->tex->baseColor(h.u, h.v, h.hitPos);
+                /*auto co = h.matPtr->tex->baseColor(h.u, h.v, h.hitPos);
                 std::cout<<"h.hitMatBaseColor: "<<co.x<<" "<<co.y<<" "<<co.z<<std::endl;
                 std::cout<<"r.pos: "<<r.pos.x<<" "<<r.pos.y<<" "<<r.pos.z<<std::endl;
                 std::cout<<"r.direc: "<<r.direc.x<<" "<<r.direc.y<<" "<<r.direc.z<<std::endl;
                 std::cout<<"h.hitPos: "<<h.hitPos.x<<" "<<h.hitPos.y<<" "<<h.hitPos.z<<std::endl;
                 std::cout<<"h.hitNormal: "<<h.hitNormal.x<<" "<<h.hitNormal.y<<" "<<h.hitNormal.z<<std::endl;
-                std::cout<<"h.hitOutDirec: "<<h.hitOutDirec.x<<" "<<h.hitOutDirec.y<<" "<<h.hitOutDirec.z<<std::endl<<std::endl;
+                std::cout<<"h.hitOutDirec: "<<h.hitOutDirec.x<<" "<<h.hitOutDirec.y<<" "<<h.hitOutDirec.z<<std::endl<<std::endl;*/
             }
 
             //if light
@@ -227,8 +227,6 @@ glm::vec3 primitiveList::colorIterator(ray &r, int times)
             }
 
             glm::vec3 albe = h.matPtr->albedo(h, h.hitOutDirec, - r.direc) / h.hitPdf;
-            if(debugFlag)
-                std::cout<<"albe: "<<albe.x<<" "<<albe.y<<" "<<albe.z<<std::endl;
             res *= albe;
             r.pos = h.hitPos;
             r.direc = h.hitOutDirec;
@@ -237,10 +235,10 @@ glm::vec3 primitiveList::colorIterator(ray &r, int times)
         {
             if(debugFlag)
             {
-                std::cout<<"r.pos: "<<r.pos.x<<" "<<r.pos.y<<" "<<r.pos.z<<std::endl;
+                /*std::cout<<"r.pos: "<<r.pos.x<<" "<<r.pos.y<<" "<<r.pos.z<<std::endl;
                 std::cout<<"r.direc: "<<r.direc.x<<" "<<r.direc.y<<" "<<r.direc.z<<std::endl;
                 std::cout<<"h.hitNormal: "<<h.hitNormal.x<<" "<<h.hitNormal.y<<" "<<h.hitNormal.z<<std::endl;
-                std::cout<<"h.hitOutDirec: "<<h.hitOutDirec.x<<" "<<h.hitOutDirec.y<<" "<<h.hitOutDirec.z<<std::endl<<std::endl;
+                std::cout<<"h.hitOutDirec: "<<h.hitOutDirec.x<<" "<<h.hitOutDirec.y<<" "<<h.hitOutDirec.z<<std::endl<<std::endl;*/
 
                 debugVertices.push_back(h.hitPos.x + h.hitOutDirec.x * 700);
                 debugVertices.push_back(h.hitPos.y + h.hitOutDirec.y * 700);
