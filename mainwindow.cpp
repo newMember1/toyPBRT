@@ -11,7 +11,8 @@
 #include "./materials/simplematerial.h"
 #include "./testScenes/cornellbox.h"
 #include "./testScenes/glassBunny.h"
-#include "./testScenes/disneyMatSpheres.h"
+#include "./testScenes/basicMatSpheres.h"
+#include "./testScenes/disneymatobjects.h"
 #include "./testScenes/refractcheck.h"
 
 bool debugFlag=false;
@@ -43,9 +44,10 @@ void MainWindow::initPBRTResource()
     //config scene
     //auto cornellBoxObjects = cornellBox::getInstance().getAllObjects();
     //auto cornellBoxBunny = glassBunny::getInstance().getAllObjects();
-    auto sphereObjects = disneyMatSpheres::getInstance().getAllObjects();
+    auto sphereObjects = basicMatSpheres::getInstance().getAllObjects();
+    auto disneyMatBunny = disneyMatObjects::getInstance().getAllObjects();
     //auto refractCheckObjects = refractCheck::getInstance().getAllObjects();
-    this->scenes.reset(new scene(sphereObjects));
+    this->scenes.reset(new scene(disneyMatBunny));
 
     //connect signal
     connect(ui->renderBotton, &QPushButton::clicked, this, &MainWindow::render);
@@ -56,6 +58,7 @@ void MainWindow::initPBRTResource()
     connect(ui->colorHit, SIGNAL(clicked(bool)), this, SLOT(setColorMode()));
     connect(ui->colorNorVis, SIGNAL(clicked(bool)), this, SLOT(setColorMode()));
     connect(ui->colorNorTest, SIGNAL(clicked(bool)), this, SLOT(setColorMode()));
+    connect(ui->test, SIGNAL(clicked(bool)), this, SLOT(setColorMode()));
 }
 
 void MainWindow::enableMultiThreads()
@@ -69,17 +72,18 @@ void MainWindow::enableMultiThreads()
 void MainWindow::setColorMode()
 {
     if(ui->colorIter->isChecked())
-        mode = iterator;
+        mode = colorMode::iterator;
     else if(ui->colorRec->isChecked())
-        mode = recursive;
+        mode = colorMode::recursive;
     else if(ui->colorHit->isChecked())
-        mode = hitTest;
+        mode = colorMode::hitTest;
     else if(ui->colorNorVis->isChecked())
-        mode = normalVis;
+        mode = colorMode::normalVis;
     else if(ui->colorNorTest->isChecked())
-        mode = normalTest;
-    else
-        std::cout<<"no color mode selected..."<<std::endl;
+        mode = colorMode::normalTest;
+    else if(ui->test->isChecked())
+        mode = colorMode::test;
+    std::cout<<"no color mode selected..."<<std::endl;
 }
 
 void MainWindow::render()
@@ -112,7 +116,7 @@ void MainWindow::render()
      * remember that i and j increse from left bottom to right top
      */
 
-    scenes->getLists()->setMode(mode);
+    scenes->getLists()->setMode(colorMode(mode));
     const int numThread=std::thread::hardware_concurrency();
     if(this->multiThreads)
     {
@@ -155,15 +159,11 @@ void MainWindow::render()
                 glm::vec3 c(0);
                 for(int k = 0; k < ns; ++k)
                 {
-                    /*if(i == 50 && j == 50 && k == 0)
-                        debugFlag=true; 
+                    if(i == 50 && j == 50 && k == 0)
+                        debugFlag=true;
                     else
-                        debugFlag=false;*/
+                        debugFlag=false;
                     cam->emitRay(j,i,r);
-					if (abs(r.direc.x + 0.186332) < 0.00001 && abs(r.direc.y + 0.220472) < 0.00001 && abs(r.direc.z + 0.95743) < 0.00001)
-						debugFlag = true;
-					else
-						debugFlag = false;
                     glm::vec3 tmp = scenes->getLists()->color(r,0);
 					tmp = tmp / (tmp + vec3(1.0f));
 					tmp = pow(tmp, vec3(1.0f / 2.2));

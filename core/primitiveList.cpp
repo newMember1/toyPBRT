@@ -21,9 +21,9 @@ primitiveList::primitiveList(std::unordered_map<std::string, std::shared_ptr<pri
     allModels.reset(new bvh(pList));
 }
 
-void primitiveList::setMode(int m)
+void primitiveList::setMode(colorMode m)
 {
-    mode = (colorMode)m;
+    mode = m;
 }
 
 void primitiveList::addPrimitive(std::shared_ptr<primitiveBase> ptr)
@@ -52,20 +52,23 @@ glm::vec3 primitiveList::color(ray &r, int times)
 {
     switch (mode)
     {
-    case iterator:
+    case colorMode::iterator:
         return colorIterator(r, times);
         break;
-    case recursive:
+    case colorMode::recursive:
         return colorRecursive(r, times);
         break;
-    case hitTest:
+    case colorMode::hitTest:
         return colorHitTest(r, times);
         break;
-    case normalVis:
+    case colorMode::normalVis:
         return colorNormalVis(r, times);
         break;
-    case normalTest:
+    case colorMode::normalTest:
         return colorNormalTest(r, times);
+        break;
+    case colorMode::test:
+        return test(r, times);
         break;
     }
 }
@@ -253,4 +256,25 @@ glm::vec3 primitiveList::colorIterator(ray &r, int times)
     }
 
     return glm::vec3{0, 0, 0};
+}
+
+glm::vec3 primitiveList::test(ray &r, int times)
+{
+    //only for test so we can easily modify code here
+    hitRecord h;
+    if(hit(r, h, epslion, 1e6))
+    {
+        if(h.matPtr->isLight)
+        {
+            if(glm::dot(r.direc, h.hitNormal) < 0)
+                return h.matPtr->tex->baseColor(h.u, h.v, h.hitPos);
+            else
+                return glm::vec3{0, 0, 0};
+        }
+
+        glm::vec3 albe = h.matPtr->albedo(h, h.hitOutDirec, -r.direc) / h.hitPdf;
+        return albe;
+    }
+    else
+        return glm::vec3(0.5f);
 }

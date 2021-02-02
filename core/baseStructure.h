@@ -98,4 +98,14 @@ enum class materialType
     basicBRDFMatrial,
     disneyBRDFMaterial
 };
+
+enum class colorMode
+{
+    iterator,
+    recursive,
+    hitTest,
+    normalVis,
+    normalTest,
+    test
+};
 #endif // BASESTRUCTURE_H

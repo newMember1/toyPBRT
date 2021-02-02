@@ -35,6 +35,7 @@ bool model::hit(ray &r, hitRecord &h, float minT, float maxT)
         std::cout<<"error,no data in model..."<<std::endl;
     if(!aabbBox.hit(r,minT,maxT))
         std::cout<<"don't hit model..."<<std::endl;
+
     return modelBVH->hit(r,h,minT,maxT);
 }
 
