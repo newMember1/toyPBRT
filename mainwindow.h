@@ -41,15 +41,7 @@ private:
     std::vector<float> debugVertices;
     std::vector<float> debugColors;
 
-    enum colorMode
-    {
-        iterator,
-        recursive,
-        hitTest,
-        normalVis,
-        normalTest
-    };
-    colorMode mode{iterator};
+    colorMode mode = colorMode::iterator;
 
     bool showDebugRay = false;
     std::vector<std::vector<float>> debugDatas;

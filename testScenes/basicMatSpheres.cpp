@@ -1,14 +1,14 @@
-#include "disneyMatSpheres.h"
+#include "basicMatSpheres.h"
 #include <string>
 
-disneyMatSpheres::disneyMatSpheres()
+basicMatSpheres::basicMatSpheres()
 {
     createTextures();
     createMatrials();
     createObjects();
 }
 
-void disneyMatSpheres::createTextures()
+void basicMatSpheres::createTextures()
 {
     auto red = std::make_shared<constTexture>(glm::vec3(0.5, 0, 0));
     auto redBase = std::dynamic_pointer_cast<texture>(std::move(red));
@@ -23,7 +23,7 @@ void disneyMatSpheres::createTextures()
     }
 }
 
-void disneyMatSpheres::createMatrials()
+void basicMatSpheres::createMatrials()
 {
     auto redBase = getTexture("redTex");
     for(int i = 0; i < lightColors.size(); ++i)
@@ -50,7 +50,7 @@ void disneyMatSpheres::createMatrials()
     }
 }
 
-void disneyMatSpheres::createObjects()
+void basicMatSpheres::createObjects()
 {
     for(int i = 0; i < lightColors.size(); ++i)
     {
@@ -77,7 +77,7 @@ void disneyMatSpheres::createObjects()
 
 using std::cout;
 using std::endl;
-shared_ptr<texture> disneyMatSpheres::getTexture(string name)
+shared_ptr<texture> basicMatSpheres::getTexture(string name)
 {
     if(textures.find(name) != textures.end())
         return textures[name];
@@ -88,7 +88,7 @@ shared_ptr<texture> disneyMatSpheres::getTexture(string name)
     }
 }
 
-shared_ptr<materialBase> disneyMatSpheres::getMatrial(string name)
+shared_ptr<materialBase> basicMatSpheres::getMatrial(string name)
 {
     if(materials.find(name) != materials.end())
         return materials[name];
@@ -99,7 +99,7 @@ shared_ptr<materialBase> disneyMatSpheres::getMatrial(string name)
     }
 }
 
-shared_ptr<primitiveBase> disneyMatSpheres::getObject(string name)
+shared_ptr<primitiveBase> basicMatSpheres::getObject(string name)
 {
     if(objects.find(name) != objects.end())
         return objects[name];
@@ -110,13 +110,13 @@ shared_ptr<primitiveBase> disneyMatSpheres::getObject(string name)
     }
 }
 
-disneyMatSpheres & disneyMatSpheres::getInstance()
+basicMatSpheres & basicMatSpheres::getInstance()
 {
-    static disneyMatSpheres instance;
+    static basicMatSpheres instance;
     return instance;
 }
 
-unordered_map<string, shared_ptr<primitiveBase>> disneyMatSpheres::getAllObjects()
+unordered_map<string, shared_ptr<primitiveBase>> basicMatSpheres::getAllObjects()
 {
     return objects;
 }

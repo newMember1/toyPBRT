@@ -14,14 +14,14 @@ using std::unordered_map;
 using std::shared_ptr;
 using std::string;
 
-class disneyMatSpheres
+class basicMatSpheres
 {
 public:
     void createTextures();
     void createMatrials();
     void createObjects();
 
-    static disneyMatSpheres & getInstance();
+    static basicMatSpheres & getInstance();
     std::shared_ptr<cameraBase> getCamera() { return cam; }
     unordered_map<std::string, shared_ptr<primitiveBase>> getAllObjects();
 private:
@@ -45,7 +45,7 @@ private:
     int nrColumns = 7;
     float spacing = 2.5;
 
-    disneyMatSpheres();
+    basicMatSpheres();
 
     glm::vec3 x{1, 0, 0};
     glm::vec3 y{0, 1, 0};
