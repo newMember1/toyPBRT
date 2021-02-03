@@ -40,8 +40,9 @@ SOURCES += \
     primitive/rectangle.cpp \
     primitive/sphere.cpp \
     primitive/triangle.cpp \
+    testScenes/basicMatSpheres.cpp \
     testScenes/cornellbox.cpp \
-    testScenes/disneyMatSpheres.cpp \
+    testScenes/disneymatobjects.cpp \
     testScenes/glassBunny.cpp \
     testScenes/refractcheck.cpp
 
@@ -81,8 +82,9 @@ HEADERS += \
     primitive/rectangle.h \
     primitive/sphere.h \
     primitive/triangle.h \
+    testScenes/basicMatSpheres.h \
     testScenes/cornellbox.h \
-    testScenes/disneyMatSpheres.h \
+    testScenes/disneymatobjects.h \
     testScenes/glassBunny.h \
     testScenes/refractcheck.h
 

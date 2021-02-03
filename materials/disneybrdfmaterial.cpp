@@ -147,9 +147,6 @@ glm::vec3 disneyBRDFMaterial::albedo(const hitRecord &hitRec,const glm::vec3 & i
     float Fr = glm::mix(0.04, 1.0, FH);
     float Gr = smithG_GGX(dotNL, 0.25) * smithG_GGX(dotNV, 0.25);
 
-    std::cout<<Ds<<std::endl;
-    return glm::vec3(Ds);
-
     return ((1.0f / PI) * glm::mix(Fd, ss, subSurface) * Cdlin + Fsheen)
             * (1 - metallic);
     return ((1.0f / PI) * glm::mix(Fd, ss, subSurface) * Cdlin + Fsheen)
