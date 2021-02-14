@@ -180,6 +180,15 @@ bool triangle::hit(ray &r, hitRecord &h, float minT, float maxT)
         h.hitReflect = reflect(r.direc, h.hitNormal);
         h.hitOutDirec = directionGenerator::getInstance().generate(h.hitPos, h.hitNormal);
 
+        //calculate xAxis and yAxis
+        //here we simply cross normal and X axis to get 'xAxis' then get 'yAxis'
+        h.xAxis = glm::cross(glm::vec3(1, 0, 0), h.hitNormal);
+        if (h.xAxis.x < 0)
+            h.xAxis = -h.xAxis;
+        h.yAxis = glm::cross(h.xAxis, h.hitNormal);
+        if (h.yAxis.x < 0)
+            h.yAxis = -h.yAxis;
+
         //for refract's calculate
         if(mat->type == materialType::dielectrics)
         {

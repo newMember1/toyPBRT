@@ -17,8 +17,8 @@ disneyBRDFMaterial::disneyBRDFMaterial(float _subSurface,float _metallic,float _
     clearCoatGloss=_clearCoatGloss;
 
     aspect=sqrt(1-anisotropic*0.9);
-    ax=glm::max(0.001f,pow2(roughness)/aspect);
-    ay=glm::max(0.001f,pow2(roughness)*aspect);
+    ax=glm::max(0.001f, glm::pow(roughness, 2.0f)/aspect);
+    ay=glm::max(0.001f, glm::pow(roughness, 2.0f)*aspect);
 }
 
 disneyBRDFMaterial::disneyBRDFMaterial(std::shared_ptr<texture> _tex)
@@ -38,8 +38,8 @@ disneyBRDFMaterial::disneyBRDFMaterial(std::shared_ptr<texture> _tex)
     clearCoatGloss=1;
 
     aspect=sqrt(1-anisotropic*0.9);
-    ax=glm::max(0.001f,pow2(roughness)/aspect);
-    ay=glm::max(0.001f,pow2(roughness)*aspect);
+    ax=glm::max(0.001f, glm::pow(roughness, 2.0f)/aspect);
+    ay=glm::max(0.001f, glm::pow(roughness, 2.0f)*aspect);
 }
 
 void disneyBRDFMaterial::setSubSurface(float _subSurface)
@@ -61,8 +61,11 @@ void disneyBRDFMaterial::setRoughness(float _roughness)
 {
     roughness = _roughness;
     aspect=sqrt(1-anisotropic*0.9);
-    ax=glm::max(0.001f,pow2(roughness)/aspect);
-    ay=glm::max(0.001f,pow2(roughness)*aspect);
+    ax=glm::max(0.001f, glm::pow(roughness, 2.0f)/aspect);
+    ay=glm::max(0.001f, glm::pow(roughness, 2.0f)*aspect);
+    std::cout<<"roughness : "<<roughness<<std::endl;
+    std::cout<<"aspect : "<<aspect<<std::endl;
+    std::cout<<"ax ay : "<<ax<<" "<<ay<<std::endl;
 }
 
 void disneyBRDFMaterial::setSpecularTint(float _specularTint)
@@ -74,8 +77,8 @@ void disneyBRDFMaterial::setAnisotropic(float _anisotropic)
 {
     anisotropic = _anisotropic;
     aspect=sqrt(1-anisotropic*0.9);
-    ax=glm::max(0.001f,pow2(roughness)/aspect);
-    ay=glm::max(0.001f,pow2(roughness)*aspect);
+    ax=glm::max(0.001f, glm::pow(roughness, 2.0f)/aspect);
+    ay=glm::max(0.001f, glm::pow(roughness, 2.0f)*aspect);
 }
 
 void disneyBRDFMaterial::setSheen(float _sheen)
@@ -99,29 +102,35 @@ void disneyBRDFMaterial::setClearCoatGloss(float _clearCoatGloss)
 }
 
 //use two blobes here
-glm::vec3 disneyBRDFMaterial::albedo(const hitRecord &hitRec,const glm::vec3 & inDirec,const glm::vec3 & outDirec)
+glm::vec3 disneyBRDFMaterial::albedo(const hitRecord &hitRec, const glm::vec3 &lightDirec, const glm::vec3 &eyeDirec)
 {
-    glm::vec3 N = glm::normalize(hitRec.hitNormal);
-    glm::vec3 L = glm::normalize(inDirec);
-    glm::vec3 V = glm::normalize(outDirec);
-    glm::vec3 H = glm::normalize(L+V);
+    N = glm::normalize(hitRec.hitNormal);
+    L = glm::normalize(lightDirec);
+    V = glm::normalize(eyeDirec);
+    H = glm::normalize(L+V);
 
-    float dotNH = glm::dot(N,H);
-    float dotNL = glm::dot(N,L);
-    float dotNV = glm::dot(N,V);
-    float dotHL = glm::dot(H,L);
+    dotNH = glm::dot(N,H);
+    dotNL = glm::dot(N,L);
+    dotNV = glm::dot(N,V);
+    dotHL = glm::dot(H,L);
 
     if(dotNL < 0 || dotNV < 0)
         return glm::vec3(0);
 
     baseColor = this->tex->baseColor(hitRec.u, hitRec.v, hitRec.hitPos);
-    glm::vec3 Cdlin = baseColor;
+    Cdlin = baseColor;
     float Cdlum = 0.3 * Cdlin.x + 0.6 * Cdlin.y + 0.1 * Cdlin.z;
-    glm::vec3 Ctint = Cdlum > 0 ? Cdlin / Cdlum : glm::vec3(1.0f);
-    glm::vec3 Cspec0 = glm::mix(specular  * 0.08f * glm::mix(glm::vec3(1.0f), Ctint, specularTint), Cdlin, metallic);
-    glm::vec3 Csheen = glm::mix(glm::vec3(1.0f), Ctint,sheenTint);
+    Ctint = Cdlum > 0 ? Cdlin / Cdlum : glm::vec3(1.0f);
+    Cspec0 = glm::mix(specular  * 0.08f * glm::mix(glm::vec3(1.0f), Ctint, specularTint), Cdlin, metallic);
+    Csheen = glm::mix(glm::vec3(1.0f), Ctint,sheenTint);
 
-    //1.diffuse item,include surface diffuse and subsurface scattering
+    glm::vec3 diffColor = diff();
+    glm::vec3 specColor = spec(hitRec.xAxis, hitRec.yAxis);
+    return specColor + diffColor;
+}
+
+glm::vec3 disneyBRDFMaterial::diff()
+{
     float FL = SchlickFresnel(dotNL), FV = SchlickFresnel(dotNV);
     float Fd90 = 0.5 + 2 * dotHL * dotHL * roughness;
     float Fd = glm::mix(1.0f, Fd90, FL) * glm::mix(1.0f, Fd90, FV);
@@ -130,28 +139,25 @@ glm::vec3 disneyBRDFMaterial::albedo(const hitRecord &hitRec,const glm::vec3 & i
     float Fss = glm::mix(1.0f, Fss90, FL) * glm::mix(1.0f, Fss90, FV);
     float ss = 1.25 * (Fss * (1.0 / (dotNL + dotNV) - 0.5) + 0.5);
 
-    //2.then specular
-    float dotHX = glm::dot(H, hitRec.xAxis);
-    float dotHY = glm::dot(H, hitRec.yAxis);
-    float Ds = GTR2_aniso(dotNH, dotHX, dotHY, ax, ay);
+    return (1.0f / PI) * glm::mix(Fd, ss, subSurface) * Cdlin * (1 -  metallic);
+}
+
+glm::vec3 disneyBRDFMaterial::spec(glm::vec3 X, glm::vec3 Y)
+{
+    float Ds = GTR2_aniso(dotNH, glm::dot(H, X), glm::dot(H, Y), ax, ay);
     float FH = SchlickFresnel(dotHL);
-    glm::vec3 Fs = glm::mix(Cspec0, glm::vec3(1.0f), FH);
+    glm::vec3 Fs = mix(Cspec0, glm::vec3(1), FH);
     float Gs;
-    Gs = smithG_GGX_aniso(dotNL, glm::dot(L, hitRec.xAxis), glm::dot(L, hitRec.yAxis), ax, ay);
-    Gs *= smithG_GGX_aniso(dotNV, glm::dot(V, hitRec.xAxis), glm::dot(V, hitRec.yAxis), ax, ay);
 
-    //sheen
-    glm::vec3 Fsheen = FH * sheen * Csheen;
-    //clearcoat
-    float Dr = GTR1(dotNH, glm::mix(0.1, 0.001, clearCoatGloss));
-    float Fr = glm::mix(0.04, 1.0, FH);
-    float Gr = smithG_GGX(dotNL, 0.25) * smithG_GGX(dotNV, 0.25);
+    Gs  = smithG_GGX_aniso(dotNL, glm::dot(L, X), glm::dot(L, Y), ax, ay);
+    Gs *= smithG_GGX_aniso(dotNV, glm::dot(V, X), glm::dot(V, Y), ax, ay);
 
-    return ((1.0f / PI) * glm::mix(Fd, ss, subSurface) * Cdlin + Fsheen)
-            * (1 - metallic);
-    return ((1.0f / PI) * glm::mix(Fd, ss, subSurface) * Cdlin + Fsheen)
-            * (1 - metallic)
-            + Gs * Fs * Ds + 0.25f * clearCoat * Gr * Fr * Dr;
+    // clearcoat (ior = 1.5 -> F0 = 0.04)
+    float Dr = GTR1(dotNH, glm::mix(0.1f, 0.001f, clearCoatGloss));
+    float Fr = glm::mix(.04, 1.0, FH);
+    float Gr = smithG_GGX(dotNL, .25) * smithG_GGX(dotNV, .25);
+
+    return Gs * Fs * Ds + 0.25f * clearCoat * Gr * Fr * Dr;
 }
 
 glm::vec3 disneyBRDFMaterial::mon2lin(glm::vec3 v)
@@ -176,9 +182,9 @@ float disneyBRDFMaterial::GTR2(float alpha,float dotNH)
     return a2 / (PI * den * den);
 }
 
-float disneyBRDFMaterial::GTR2_aniso(float dotHX, float dotHY, float dotNH, float ax, float ay)
+float disneyBRDFMaterial::GTR2_aniso(float dotNH, float dotHX, float dotHY, float ax, float ay)
 {
-    float deno = dotHX * dotHX / (ax * ax) + dotHY * dotHY / (ay * ay) + dotNH * dotNH;
+    float deno = glm::pow(dotHX / ax, 2) + glm::pow(dotHY / ay, 2) + glm::pow(dotNH, 2);
     return 1.0 / (PI * ax * ay * deno * deno);
 }
 

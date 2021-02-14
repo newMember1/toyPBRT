@@ -20,8 +20,8 @@ public:
 
     //a material pointer and anisotropy attributes
     //default xAxis and yAxis
-    glm::vec3 xAxis=glm::vec3(0,1,0);
-    glm::vec3 yAxis=glm::vec3(1,0,0);
+    glm::vec3 xAxis;
+    glm::vec3 yAxis;
     std::shared_ptr<materialBase> matPtr;
 };
 

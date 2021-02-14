@@ -10,7 +10,11 @@ public:
 
     disneyBRDFMaterial(std::shared_ptr<texture> _tex);
 
-    glm::vec3 albedo(const hitRecord &hitRec,const glm::vec3 & inDirec,const glm::vec3 & outDirec) override;
+    glm::vec3 albedo(const hitRecord &hitRec,const glm::vec3 & lightDirec,const glm::vec3 & eyeDirec) override;
+
+    glm::vec3 diff();
+
+    glm::vec3 spec(glm::vec3 X, glm::vec3 Y);
 
     void setSubSurface(float _subSurface);
 
@@ -51,10 +55,24 @@ private:
     glm::vec3 mon2lin(glm::vec3 v);
     float GTR1(float dotNH,float a);
     float GTR2(float alpha,float dotNH);
-    float GTR2_aniso(float dotHX, float dotHY, float dotNH, float ax, float ay);
+    float GTR2_aniso(float dotNH, float dotHX, float dotHY, float ax, float ay);
     float SchlickFresnel(float u);
     float smithG_GGX(float dotNV,float alphaG);
     float smithG_GGX_aniso(float dotNV,float dotVX,float dotVY,float ax,float ay);
+
+    glm::vec3 N;
+    glm::vec3 L;
+    glm::vec3 V;
+    glm::vec3 H;
+    float dotNH;
+    float dotNL;
+    float dotNV;
+    float dotHL;
+
+    glm::vec3 Cdlin;
+    glm::vec3 Ctint;
+    glm::vec3 Cspec0;
+    glm::vec3 Csheen;
 };
 
 #endif // DISNEYBRDF_H

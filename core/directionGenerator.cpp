@@ -22,7 +22,7 @@ glm::vec3 directionGenerator::generate(const glm::vec3 & surfPos, const glm::vec
 {
 
     float r = drand48();
-    if(r < 0.5)
+    if(r < 0)
         diffuse = true;
     else
         diffuse = false;
