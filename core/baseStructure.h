@@ -6,8 +6,8 @@
 #include<3rdparty/glm/gtc/matrix_transform.hpp>
 #include<iostream>
 
-const float PI=3.1415026;
-const float epslion=1e-8;
+const float PI = 3.1415026;
+const float epslion = 1e-5;
 
 const int MAX_TRACE_TIMES = 20;
 static unsigned long long seed = 1;
