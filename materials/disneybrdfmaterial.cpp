@@ -63,9 +63,6 @@ void disneyBRDFMaterial::setRoughness(float _roughness)
     aspect=sqrt(1-anisotropic*0.9);
     ax=glm::max(0.001f, glm::pow(roughness, 2.0f)/aspect);
     ay=glm::max(0.001f, glm::pow(roughness, 2.0f)*aspect);
-    std::cout<<"roughness : "<<roughness<<std::endl;
-    std::cout<<"aspect : "<<aspect<<std::endl;
-    std::cout<<"ax ay : "<<ax<<" "<<ay<<std::endl;
 }
 
 void disneyBRDFMaterial::setSpecularTint(float _specularTint)

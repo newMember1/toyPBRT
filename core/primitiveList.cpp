@@ -260,21 +260,18 @@ glm::vec3 primitiveList::colorIterator(ray &r, int times)
 
 glm::vec3 primitiveList::test(ray &r, int times)
 {
-    //only for test so we can easily modify code here
+    //sun light
     hitRecord h;
+    glm::vec3 lightDirec{0.0f, 0.0f, -1.0f};
+    ray temp = r;
     if(hit(r, h, epslion, 1e6))
     {
         if(h.matPtr->isLight)
-        {
-            if(glm::dot(r.direc, h.hitNormal) < 0)
-                return h.matPtr->tex->baseColor(h.u, h.v, h.hitPos);
-            else
-                return glm::vec3{0, 0, 0};
-        }
-
-        glm::vec3 albe = h.matPtr->albedo(h, h.hitOutDirec, -r.direc) / h.hitPdf;
+            return h.matPtr->tex->baseColor(h.u, h.v, h.hitPos);
+        glm::vec3 albe = h.matPtr->albedo(h, -lightDirec, -temp.direc);
         return albe;
     }
     else
-        return glm::vec3(0.5f);
+        return glm::vec3(0);
+
 }
