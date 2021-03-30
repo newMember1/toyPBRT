@@ -7,6 +7,7 @@ class cube : public primitiveBase
 {
 public:
     cube(const glm::vec3 & _min, const glm::vec3 & _max, std::shared_ptr<materialBase> _mat);
+    cube(const glm::vec3 & _min, const glm::vec3 & _max, std::vector<std::shared_ptr<materialBase>> _mats);
     bool hit(ray &r, hitRecord &h, float minT, float maxT) override;
     glm::vec3 normal(const glm::vec3 &surPos) override;
     glm::vec3 reflect(const glm::vec3 &inDirec, const glm::vec3 &normal) override;
@@ -20,7 +21,7 @@ public:
     void handleMatrix() override;
 private:
     std::shared_ptr<rectangle> faces[6];
-
+    std::vector<std::shared_ptr<materialBase>> mats;
 };
 
 #endif // CUBE_H

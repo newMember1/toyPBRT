@@ -14,6 +14,7 @@
 #include "./testScenes/basicMatSpheres.h"
 #include "./testScenes/disneymatobjects.h"
 #include "./testScenes/refractcheck.h"
+#include "./testScenes/imagebasedlight.h"
 
 bool debugFlag=false;
 MainWindow::MainWindow(QWidget *parent)
@@ -37,18 +38,6 @@ void MainWindow::initPBRTResource()
     ui->imageLabel->setAutoFillBackground(true);
     ui->imageLabel->setPalette((palette));
 
-    //initialize data
-    this->cam=nullptr;
-    this->img=nullptr;
-
-    //config scene
-    //auto cornellBoxObjects = cornellBox::getInstance().getAllObjects();
-    //auto cornellBoxBunny = glassBunny::getInstance().getAllObjects();
-    auto sphereObjects = basicMatSpheres::getInstance().getAllObjects();
-    auto disneyMatBunny = disneyMatObjects::getInstance().getAllObjects();
-    //auto refractCheckObjects = refractCheck::getInstance().getAllObjects();
-    this->scenes.reset(new scene(disneyMatBunny));
-
     //connect signal
     connect(ui->renderBotton, &QPushButton::clicked, this, &MainWindow::render);
     connect(ui->checkBox_multiThread, &QCheckBox::clicked, this, &MainWindow::enableMultiThreads);
@@ -59,6 +48,22 @@ void MainWindow::initPBRTResource()
     connect(ui->colorNorVis, SIGNAL(clicked(bool)), this, SLOT(setColorMode()));
     connect(ui->colorNorTest, SIGNAL(clicked(bool)), this, SLOT(setColorMode()));
     connect(ui->test, SIGNAL(clicked(bool)), this, SLOT(setColorMode()));
+
+    //initialize data
+    this->cam=nullptr;
+    this->img=nullptr;
+
+    //config scene
+    //auto cornellBoxObjects = cornellBox::getInstance().getAllObjects();
+    //auto cornellBoxBunny = glassBunny::getInstance().getAllObjects();
+    //auto sphereObjects = basicMatSpheres::getInstance().getAllObjects();
+    //auto disneyMatBunny = disneyMatObjects::getInstance().getAllObjects();
+    //auto refractCheckObjects = refractCheck::getInstance().getAllObjects();
+    auto scenes = std::make_shared<imageBasedLight>();
+    scenes->initResources();
+    auto objects = scenes->getAllObjects();
+
+    this->scenes.reset(new sceneLists(objects));
 }
 
 void MainWindow::enableMultiThreads()
@@ -88,6 +93,7 @@ void MainWindow::setColorMode()
 
 void MainWindow::render()
 {
+    std::cout<<"render start."<<std::endl;
     //config enviorment
     int nx=ui->spinBox_nx->value();
     int ny=ui->spinBox_ny->value();
@@ -95,7 +101,8 @@ void MainWindow::render()
 
     cam.reset(new fovCamera(glm::vec3(278, 278, -800), glm::vec3(278, 278, 0), 40.0, 1.0, nx, ny));
     cam.reset(new fovCamera(glm::vec3(0, 0, 3), glm::vec3(0, 0, 0), 45, 1, nx, ny));
-    img.reset(new QImage(nx,ny,QImage::Format_RGB32));
+    cam.reset(new fovCamera(glm::vec3(0, 0, 0), glm::vec3(0, 0, -50), 45, 1, nx, ny));
+    img.reset(new QImage(nx, ny,QImage::Format_RGB32));
     ray r(glm::vec3(0.0f),glm::vec3(1.0f));
 
     std::vector<glm::vec3> pixels;
@@ -121,7 +128,7 @@ void MainWindow::render()
     if(this->multiThreads)
     {
         std::cout<<"multiThreads can't be used in lightPdf's calculation..."<<std::endl;
-        std::cout<<"multiThreads rendering..."<<std::endl;
+        std::cout<<"enable multiThreads"<<std::endl;
         int taskPerThread;
         if(nx%(numThread-1) == 0)
             taskPerThread=nx/(numThread-1);
@@ -151,7 +158,6 @@ void MainWindow::render()
     }
     else
     {
-        std::cout<<"rendering..."<<std::endl;
         for(int i=0;i<nx;++i)
         {
             for(int j=0;j<ny;++j)
@@ -179,6 +185,7 @@ void MainWindow::render()
     }
 
     time(&e);
+    std::cout<<"render end."<<std::endl;
     std::cout<<"rendering time is: "<<(double)(e-s)<<"'s"<<std::endl;
 
     //ppm file store datas by row

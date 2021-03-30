@@ -10,7 +10,7 @@
 #include "./primitive/rectangle.h"
 #include "./primitive/model.h"
 #include "./core/primitiveList.h"
-#include "./core/scene.h"
+#include "./core/scenelists.h"
 #include<unordered_map>
 #include "./debugger/ogldebugwindow.h"
 
@@ -49,6 +49,6 @@ private:
     Ui::MainWindow *ui;
     std::unique_ptr<QImage> img;
     std::unique_ptr<cameraBase> cam;
-    std::shared_ptr<scene> scenes;
+    std::shared_ptr<sceneLists> scenes;
 };
 #endif // MAINWINDOW_H

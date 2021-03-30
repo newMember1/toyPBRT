@@ -26,7 +26,8 @@ SOURCES += \
     accelerate/bvh.cpp \
     core/directionGenerator.cpp \
     core/primitiveList.cpp \
-    core/scene.cpp \
+    core/scenebase.cpp \
+    core/scenelists.cpp \
     debugger/ogldebugwindow.cpp \
     main.cpp \
     mainwindow.cpp \
@@ -44,6 +45,7 @@ SOURCES += \
     testScenes/cornellbox.cpp \
     testScenes/disneymatobjects.cpp \
     testScenes/glassBunny.cpp \
+    testScenes/imagebasedlight.cpp \
     testScenes/refractcheck.cpp
 
 HEADERS += \
@@ -62,7 +64,8 @@ HEADERS += \
     core/pdfBase.h \
     core/primitiveBase.h \
     core/primitiveList.h \
-    core/scene.h \
+    core/scenebase.h \
+    core/scenelists.h \
     core/texture.h \
     debugger/ogldebugwindow.h \
     debugger/raytracer.h \
@@ -86,6 +89,7 @@ HEADERS += \
     testScenes/cornellbox.h \
     testScenes/disneymatobjects.h \
     testScenes/glassBunny.h \
+    testScenes/imagebasedlight.h \
     testScenes/refractcheck.h
 
 FORMS += \

@@ -44,6 +44,47 @@ cube::cube(const glm::vec3 & _min, const glm::vec3 & _max, std::shared_ptr<mater
     faces[5] = std::make_shared<rectangle>(bottomS, X, Z, lenX, lenZ, _mat);
 }
 
+cube::cube(const glm::vec3 & _min, const glm::vec3 & _max, std::vector<std::shared_ptr<materialBase>> _mats)
+    :primitiveBase(nullptr)
+{
+    pType = primitiveType::unknown;
+    auto min = _min;
+    auto max = _max;
+    this->aabbBox._min = min - glm::vec3(epslion);
+    this->aabbBox._max = max + glm::vec3(epslion);
+
+    glm::vec3 X{1, 0, 0};
+    glm::vec3 Y{0, 1, 0};
+    glm::vec3 Z{0, 0, 1};
+
+    float lenX = max.x - min.x;
+    float lenY = max.y - min.y;
+    float lenZ = max.z - min.z;
+
+    //left
+    glm::vec3 leftS{min.x, min.y, min.z};
+    faces[0] = std::make_shared<rectangle>(leftS, Z, Y, lenZ, lenY, _mats[0]);
+
+    //right
+    glm::vec3 rightS{max.x, min.y, max.z};
+    faces[1] = std::make_shared<rectangle>(rightS, -Z, Y, lenZ, lenY, _mats[1]);
+
+    //front
+    glm::vec3 frontS{min.x, min.y, max.z};
+    faces[2] = std::make_shared<rectangle>(frontS, X, Y, lenX, lenY, _mats[2]);
+
+    //back
+    glm::vec3 backS{max.x, min.y, min.z};
+    faces[3] = std::make_shared<rectangle>(backS, -X, Y, lenX, lenY, _mats[3]);
+
+    //top
+    glm::vec3 topS{min.x, max.y, max.z};
+    faces[4] = std::make_shared<rectangle>(topS, X, -Z, lenX, lenZ, _mats[4]);
+
+    //bottom
+    glm::vec3 bottomS{min.x, min.y, min.z};
+    faces[5] = std::make_shared<rectangle>(bottomS, X, Z, lenX, lenZ, _mats[5]);
+}
 void cube::setTranslate(const glm::vec3 &trans)
 {
     for(auto & face : faces)

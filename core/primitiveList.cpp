@@ -95,12 +95,12 @@ glm::vec3 primitiveList::colorHitTest(ray &r, int times)
             debugVertices.push_back(h.hitPos.y);
             debugVertices.push_back(h.hitPos.z);
 
-            debugColors.push_back(h.matPtr->tex->baseColor(0, 0, glm::vec3(0)).x);
-            debugColors.push_back(h.matPtr->tex->baseColor(0, 0, glm::vec3(0)).y);
-            debugColors.push_back(h.matPtr->tex->baseColor(0, 0, glm::vec3(0)).z);
+            debugColors.push_back(h.matPtr->tex->baseColor(0, 0, glm::vec3(0), glm::vec3(0)).x);
+            debugColors.push_back(h.matPtr->tex->baseColor(0, 0, glm::vec3(0), glm::vec3(0)).y);
+            debugColors.push_back(h.matPtr->tex->baseColor(0, 0, glm::vec3(0), glm::vec3(0)).z);
         }
 
-        return h.matPtr->tex->baseColor(h.u, h.v, h.hitPos);
+        return h.matPtr->tex->baseColor(h.u, h.v, h.hitPos, h.hitOutDirec);
     }
     else
     {
@@ -201,9 +201,9 @@ glm::vec3 primitiveList::colorIterator(ray &r, int times)
                 debugVertices.push_back(h.hitPos.y);
                 debugVertices.push_back(h.hitPos.z);
 
-                debugColors.push_back(h.matPtr->tex->baseColor(0, 0, glm::vec3(0)).x);
-                debugColors.push_back(h.matPtr->tex->baseColor(0, 0, glm::vec3(0)).y);
-                debugColors.push_back(h.matPtr->tex->baseColor(0, 0, glm::vec3(0)).z);
+                debugColors.push_back(h.matPtr->tex->baseColor(0, 0, glm::vec3(0), glm::vec3(0)).x);
+                debugColors.push_back(h.matPtr->tex->baseColor(0, 0, glm::vec3(0), glm::vec3(0)).y);
+                debugColors.push_back(h.matPtr->tex->baseColor(0, 0, glm::vec3(0), glm::vec3(0)).z);
 
                 /*auto co = h.matPtr->tex->baseColor(h.u, h.v, h.hitPos);
                 std::cout<<"h.hitMatBaseColor: "<<co.x<<" "<<co.y<<" "<<co.z<<std::endl;
@@ -218,7 +218,7 @@ glm::vec3 primitiveList::colorIterator(ray &r, int times)
             if(h.matPtr->isLight)
             {
                 if(glm::dot(r.direc, h.hitNormal) < 0)
-                    return res * h.matPtr->tex->baseColor(h.u, h.v, h.hitPos);
+                    return res * h.matPtr->tex->baseColor(h.u, h.v, h.hitPos, h.hitOutDirec);
                 else
                     return glm::vec3{0, 0, 0};
             }
@@ -267,7 +267,7 @@ glm::vec3 primitiveList::test(ray &r, int times)
     if(hit(r, h, epslion, 1e6))
     {
         if(h.matPtr->isLight)
-            return h.matPtr->tex->baseColor(h.u, h.v, h.hitPos);
+            return h.matPtr->tex->baseColor(h.u, h.v, h.hitPos, h.hitOutDirec);
         glm::vec3 albe = h.matPtr->albedo(h, -lightDirec, -temp.direc);
         return albe;
     }

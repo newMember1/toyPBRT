@@ -126,7 +126,7 @@ void sphere::createFrame()
             float zPos = sin(x * 2.0 * PI) * sin(y * PI) * radius + center.z;
 
             pushData(verts, xPos, yPos, zPos);
-            pushData(colors, this->mat->tex->baseColor(0, 0, glm::vec3(0)));
+            pushData(colors, this->mat->tex->baseColor(0, 0, glm::vec3(0), glm::vec3(0)));
         }
 }
 

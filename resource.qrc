@@ -5,4 +5,8 @@
         <file>shaders/raySimple.frag</file>
         <file>shaders/raySimple.vert</file>
     </qresource>
+    <qresource prefix="/pictures">
+        <file>resources/Mt-Washington-Gold-Room_Bg.jpg</file>
+        <file>resources/Mt-Washington-Cave-Room_Bg.jpg</file>
+    </qresource>
 </RCC>

@@ -254,20 +254,20 @@ std::vector<std::vector<float>> triangle::getModelLinesAndColors()
     //first line
     pushData(verts, pa);
     pushData(verts, pb);
-    pushData(colors, this->mat->tex->baseColor(0, 0, glm::vec3(0)));
-    pushData(colors, this->mat->tex->baseColor(0, 0, glm::vec3(0)));
+    pushData(colors, this->mat->tex->baseColor(0, 0, glm::vec3(0), glm::vec3(0)));
+    pushData(colors, this->mat->tex->baseColor(0, 0, glm::vec3(0), glm::vec3(0)));
 
     //second line
     pushData(verts, pb);
     pushData(verts, pc);
-    pushData(colors, this->mat->tex->baseColor(0, 0, glm::vec3(0)));
-    pushData(colors, this->mat->tex->baseColor(0, 0, glm::vec3(0)));
+    pushData(colors, this->mat->tex->baseColor(0, 0, glm::vec3(0), glm::vec3(0)));
+    pushData(colors, this->mat->tex->baseColor(0, 0, glm::vec3(0), glm::vec3(0)));
 
     //third line
     pushData(verts, pc);
     pushData(verts, pa);
-    pushData(colors, this->mat->tex->baseColor(0, 0, glm::vec3(0)));
-    pushData(colors, this->mat->tex->baseColor(0, 0, glm::vec3(0)));
+    pushData(colors, this->mat->tex->baseColor(0, 0, glm::vec3(0), glm::vec3(0)));
+    pushData(colors, this->mat->tex->baseColor(0, 0, glm::vec3(0), glm::vec3(0)));
 
     return {verts, colors};
 }
