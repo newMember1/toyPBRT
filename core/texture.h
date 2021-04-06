@@ -6,12 +6,20 @@
 
 #include "baseStructure.h"
 #include "./3rdparty/stb_image.h"
+#include "hitRecord.h"
 
 class texture
 {
 public:
     virtual ~texture(){}
-    virtual glm::vec3 baseColor(float u, float v, const glm::vec3 &pos, const glm::vec3 &direc)
+
+	virtual glm::vec3 baseColor(const hitRecord & hitRec)
+	{
+		std::cout << "Warning: you are using base class's baseColorImpl function, please check your code!" << std::endl;
+		return baseColorImpl(hitRec.u, hitRec.v, hitRec.hitPos);
+	}
+
+    virtual glm::vec3 baseColor(float u, float v, const glm::vec3 &pos)
     {
         std::cout<<"Warning: you are using base class's baseColorImpl function, please check your code!"<<std::endl;
         return baseColorImpl(u, v, pos);
@@ -47,6 +55,16 @@ public:
          color=t->color;
      };
 
+	 virtual glm::vec3 baseColor(const hitRecord & hitRec) override
+	 {
+		 return baseColorImpl(hitRec.u, hitRec.v, hitRec.hitPos);
+	 }
+
+	 virtual glm::vec3 baseColor(float u, float v, const glm::vec3 & pos) override
+	 {
+		 return baseColorImpl(u, v, pos);
+	 }
+
 private:
      virtual glm::vec3 baseColorImpl(float u, float v, const glm::vec3 &pos) override
      {
@@ -58,16 +76,23 @@ private:
 class imageTexture:public texture
 {
 public:
-    imageTexture(const char * path)
+    imageTexture(const char * path, bool flip = false)
     {
-        stbi_set_flip_vertically_on_load(true);
-        data = stbi_load(path, &nx, &ny, &nc, 0);
+		if(flip)
+			stbi_set_flip_vertically_on_load(true);
+		data = stbi_load(path, &nx, &ny, &nc, 0);
     }
 
-    virtual glm::vec3 baseColor(float u, float v, const glm::vec3 &pos, const glm::vec3 &direc) override
+	virtual glm::vec3 baseColor(const hitRecord & hitRec) override
+	{
+		return baseColorImpl(hitRec.u, hitRec.v, hitRec.hitPos);
+	}
+
+    virtual glm::vec3 baseColor(float u, float v, const glm::vec3 &pos) override
     {
         return baseColorImpl(u, v, pos);
     }
+
 private:
     virtual glm::vec3 baseColorImpl(float u, float v, const glm::vec3 &pos) override
     {
@@ -94,7 +119,7 @@ private:
         }
         else
         {
-            std::cout<<"Warning: picture channel is not as standard, please check!"<<std::endl;
+            std::cout<<"Warning: img picture channel is not as standard, please check!"<<std::endl;
             return glm::vec3(0.0f);
         }
     }
@@ -105,16 +130,24 @@ private:
 class envImageTexture:public texture
 {
 public:
-    envImageTexture(const char * path)
+    envImageTexture(const char * path, bool flip = false)
     {
-        stbi_set_flip_vertically_on_load(true);
-        data = stbi_load(path, &nx, &ny, &nc, 0);
+		if(flip)
+			stbi_set_flip_vertically_on_load(true);
+		data = stbi_load(path, &nx, &ny, &nc, 0);
     }
 
-    virtual glm::vec3 baseColor(float u, float v, const glm::vec3 &pos, const glm::vec3 &direc) override
+	virtual glm::vec3 baseColor(const hitRecord & hitRec) override
+	{
+		auto pos = glm::vec3(hitRec.invModel * glm::vec4(hitRec.hitPos, 1.0f));
+		return baseColorImpl(hitRec.u, hitRec.v, glm::normalize(pos));
+	}
+
+    virtual glm::vec3 baseColor(float u, float v, const glm::vec3 &pos) override
     {
-        return baseColorImpl(u, v, direc);
+        return baseColorImpl(u, v, glm::normalize(pos));
     }
+
 private:
     glm::vec3 baseColorImpl(float u, float v, const glm::vec3 &direc) override
     {
@@ -144,7 +177,9 @@ private:
         }
         else
         {
-            std::cout<<"Warning: picture channel is not as standard, please check!"<<std::endl;
+            if(data == NULL)
+                std::cout<<"nc: "<<nc<<std::endl;
+            std::cout<<"Warning: env picture channel is not as standard, please check!"<<std::endl;
             return glm::vec3(0.0f);
         }
     }
@@ -163,10 +198,16 @@ private:
 
 class checkTexture:public texture
 {
-public:
+public:  
     checkTexture(const glm::vec3 &a,const glm::vec3 &b):
         colorA(a),colorB(b){}
-    virtual glm::vec3 baseColor(float u, float v, const glm::vec3 &pos, const glm::vec3 &direc) override
+
+	virtual glm::vec3 baseColor(const hitRecord & hitRec) override
+	{
+		return baseColorImpl(hitRec.u, hitRec.v, hitRec.hitPos);
+	}
+
+    virtual glm::vec3 baseColor(float u, float v, const glm::vec3 &pos) override
     {
         return baseColorImpl(u, v, pos);
     }

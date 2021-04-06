@@ -114,7 +114,7 @@ glm::vec3 disneyBRDFMaterial::albedo(const hitRecord &hitRec, const glm::vec3 &l
     if(dotNL < 0 || dotNV < 0)
         return glm::vec3(0);
 
-    baseColor = this->tex->baseColor(hitRec.u, hitRec.v, hitRec.hitPos, hitRec.hitOutDirec);
+    baseColor = this->tex->baseColor(hitRec.u, hitRec.v, hitRec.hitPos);
     Cdlin = baseColor;
     float Cdlum = 0.3 * Cdlin.x + 0.6 * Cdlin.y + 0.1 * Cdlin.z;
     Ctint = Cdlum > 0 ? Cdlin / Cdlum : glm::vec3(1.0f);

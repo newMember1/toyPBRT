@@ -132,3 +132,17 @@ void model::handleMatrix()
 
     modelBVH.reset(new bvh(triangles));
 }
+
+glm::vec3 model::hitXAxis(const glm::vec3 & hitPos)
+{
+	//triangle's x axis
+	std::cout << "warning you are using model's hitYAxis, please check your code";
+	return glm::vec3(0.0f);
+}
+
+glm::vec3 model::hitYAxis(const glm::vec3 & hitPos)
+{
+	//triangle's x axis
+	std::cout << "warning you are using model's hitYAxis, please check your code";
+	return glm::vec3(0.0f);
+}

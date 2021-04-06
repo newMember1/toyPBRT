@@ -21,7 +21,7 @@ bool sphere::hit(ray &r, hitRecord &h, float minT, float maxT)
     glm::vec3 oc=r.pos-this->center;
     float a=glm::dot(r.direc,r.direc);
     float b=2*glm::dot(r.direc,oc);
-    float c=glm::dot(oc,oc)-pow2(radius);
+    float c=glm::dot(oc,oc)-pow2(radius);  
 
     float dis=b*b-4*a*c;
     if(dis<0)
@@ -36,9 +36,11 @@ bool sphere::hit(ray &r, hitRecord &h, float minT, float maxT)
 
             h.hitNormal = this->normal(h.hitPos);
             h.hitReflect = reflect(r.direc, normal(h.hitPos));
-            h.hitOutDirec = directionGenerator::getInstance().generate(h.hitPos, h.hitNormal);
-
-            //for refract's calculate
+            auto generateRes = directionPdfAdaptor::getInstance().generate(h.hitPos, h.hitNormal, h.hitRoughnessX, h.hitRoughnessY);
+			h.hitInDirec = r.direc;
+            h.hitOutDirec = glm::vec3(generateRes);
+            
+			//for refract's calculate
             if(mat->type == materialType::dielectrics)
             {
                 glm::vec3 outNormal;
@@ -78,10 +80,13 @@ bool sphere::hit(ray &r, hitRecord &h, float minT, float maxT)
                 h.hitOutDirec = h.hitRefract;
             }
 
-            h.hitPdf = directionGenerator::getInstance().value(h.hitOutDirec);
-            h.matPtr = this->mat;
+            h.hitPdf = generateRes.w;
+			h.matPtr = this->mat;
+			h.invModel = this->invModelMatrix;
+			h.xAxis = this->hitXAxis(h.hitPos);
+			h.yAxis = this->hitYAxis(h.hitPos);
 
-            return true;
+            return true; 
         }
         else
             return false;
@@ -126,7 +131,7 @@ void sphere::createFrame()
             float zPos = sin(x * 2.0 * PI) * sin(y * PI) * radius + center.z;
 
             pushData(verts, xPos, yPos, zPos);
-            pushData(colors, this->mat->tex->baseColor(0, 0, glm::vec3(0), glm::vec3(0)));
+            pushData(colors, this->mat->tex->baseColor(0, 0, glm::vec3(0)));
         }
 }
 
@@ -181,6 +186,23 @@ void sphere::handleMatrix()
     center = glm::vec3(modelMatrix * glm::vec4(center, 1.0));
     this->aabbBox=aabb(this->center-glm::vec3(radius),
                        this->center+glm::vec3(radius));
+}
+
+glm::vec3 sphere::hitXAxis(const glm::vec3 & hitPos)
+{
+	auto n = normal(hitPos);
+	float y = -(n.x / n.z);
+	glm::vec3 xAxis{ 1.0f, 0.0f, y };
+	xAxis = glm::normalize(xAxis);
+	if (n.z < 0)
+		xAxis = -xAxis;
+	return xAxis;
+}
+
+glm::vec3 sphere::hitYAxis(const glm::vec3 & hitPos)
+{
+	yAxis = glm::normalize(glm::cross(normal(hitPos), xAxis));
+	return yAxis;
 }
 
 glm::vec3 sphere::getCenter()

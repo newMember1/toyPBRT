@@ -1,4 +1,5 @@
 #include "scenebase.h"
+#include <string>
 using std::cout;
 using std::endl;
 

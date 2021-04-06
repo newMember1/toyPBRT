@@ -27,8 +27,9 @@ sceneLists::sceneLists(std::unordered_map<std::string,std::shared_ptr<primitiveB
             }
 
             else if(obj.second->pType == primitiveType::triangle)
-            {
+            { 
                 //(TO DO)make triangle light pdf
+				std::cout << "TO DO make triangle light pdf" << std::endl;
             }
 
             else if(obj.second->pType == primitiveType::sphere)
@@ -37,13 +38,25 @@ sceneLists::sceneLists(std::unordered_map<std::string,std::shared_ptr<primitiveB
                 auto spherePdf = std::make_shared<sphereLightPdf>(std::dynamic_pointer_cast<sphere>(obj.second));
                 lights[obj.first] = std::dynamic_pointer_cast<pdfBase>(spherePdf);
             }
+
+			else if (obj.second->pType == primitiveType::cube)
+			{
+				lightObjects[obj.first] = obj.second;
+				auto recPdf = std::make_shared<ggxPdf>(std::dynamic_pointer_cast<cube>(obj.second));
+				lights[obj.first] = std::dynamic_pointer_cast<pdfBase>(recPdf);
+			}
+			  
+			else
+			{
+				std::cout << "light source shape not support" << std::endl;
+			}
         }
         //handle every object's matrix;
         obj.second->handleMatrix();
     }
 
-    //handle direction generator
-    directionGenerator::getInstance().setLightPdfs(lights);
+    //init direction generator
+    directionPdfAdaptor::getInstance().init(lights);
     //construct the whole world
     worldList.reset(new primitiveList(objects));
 }

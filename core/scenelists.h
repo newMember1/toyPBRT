@@ -7,9 +7,11 @@
 
 #include "primitiveBase.h"
 #include "primitive/model.h"
-#include "directionGenerator.h"
+#include "primitive/cube.h"
+#include "directionPdfAdaptor.h"
 #include "./pdf/rectLightPdf.h"
 #include "./pdf/sphereLightPdf.h"
+#include "./pdf/ggxPdf.h"
 #include "primitiveList.h"
 
 #include "materials/simplematerial.h"

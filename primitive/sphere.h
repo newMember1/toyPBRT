@@ -1,7 +1,7 @@
 #ifndef SPHERE_H
 #define SPHERE_H
 #include "./core/primitiveBase.h"
-#include "./core/directionGenerator.h"
+#include "./core/directionPdfAdaptor.h"
 class sphere: public primitiveBase
 {
 public:
@@ -17,6 +17,8 @@ public:
     void setUniformScale(float s) override;
     void setNonUniformScale(const glm::vec3 &s) override;
     void setModelMatrix(const glm::mat4 &m) override;
+	virtual glm::vec3 hitXAxis(const glm::vec3 & hitPos);
+	virtual glm::vec3 hitYAxis(const glm::vec3 & hitPos);
 
     glm::vec3 getCenter();
 private:

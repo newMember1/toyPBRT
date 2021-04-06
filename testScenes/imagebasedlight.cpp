@@ -23,7 +23,7 @@ shared_ptr<cameraBase> imageBasedLight::getCamera(int width, int height, float f
 
 void imageBasedLight::createTextures()
 {
-    auto env = std::make_shared<imageTexture>(envMap.c_str());
+    auto env = std::make_shared<envImageTexture>(envMap.c_str());
     auto envBase = std::dynamic_pointer_cast<texture>(env);
     textures["envTex"] = envBase;
 
@@ -36,19 +36,28 @@ void imageBasedLight::createMatrials()
 {
     auto envBase = textures["envTex"];
     auto envLightMat = std::make_shared<simpleMaterial>(envBase);
-    materials["envMat"] = envLightMat;
+	envLightMat->isLight = true;
+	auto evnLightMatBase = std::dynamic_pointer_cast<materialBase>(envLightMat);
+    materials["envMat"] = evnLightMatBase;
 
     auto redBase = textures["redTex"];
     auto redDisneyMat = std::make_shared<disneyBRDFMaterial>(redBase);
-    materials["redMat"] = redDisneyMat;
+	auto redDisneyMatBase = std::dynamic_pointer_cast<materialBase>(redDisneyMat);
+    materials["redMat"] = redDisneyMatBase;
 }
 
 void imageBasedLight::createObjects()
 {
     auto envMat = getMatrial("envMat");
-    auto cornellBox = std::make_shared<cube>(glm::vec3(-50, -50, -50), glm::vec3(50, 50, 50), envMat);
+    auto cornellBox = std::make_shared<cube>(glm::vec3(-50, -50, -50), glm::vec3(50, 50, 50), envMat, true);
+	//cornellBox->setRotate(glm::vec3(1.0f), 20.0f);
     auto cornellBoxBase = std::dynamic_pointer_cast<primitiveBase>(cornellBox);
     objects["cornellBox"] = cornellBoxBase;
+
+	auto redMat = getMatrial("redMat");
+	auto ball = std::make_shared<sphere>(1.0f, glm::vec3(0.0f, 0.0f, -10.0f), redMat);
+	auto ballBase = std::dynamic_pointer_cast<primitiveBase>(ball);
+	objects["ball"] = ballBase;
 }
 
 unordered_map<string, shared_ptr<primitiveBase>> imageBasedLight::getAllObjects()

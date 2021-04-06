@@ -5,7 +5,7 @@
 class rectangle : public primitiveBase
 {
 public:
-    rectangle(const glm::vec3 & _oriPos, const glm::vec3 & _wDirec, const glm::vec3 & _hDirec, float _w, float _h, std::shared_ptr<materialBase> _mat);
+    rectangle(const glm::vec3 & _oriPos, const glm::vec3 & _wDirec, const glm::vec3 & _hDirec, float _w, float _h, std::shared_ptr<materialBase> _mat, bool flipNormal = false);
 
     bool hit(ray &r, hitRecord &h, float minT, float maxT) override;
     glm::vec3 normal(const glm::vec3 &surPos) override;
@@ -18,6 +18,9 @@ public:
     void setModelMatrix(const glm::mat4 &m) override;
     std::vector<std::vector<float> > getModelLinesAndColors() override;
     void handleMatrix() override;
+	virtual glm::vec3 hitXAxis(const glm::vec3 & hitPos);
+	virtual glm::vec3 hitYAxis(const glm::vec3 & hitPos);
+
     bool rayRect(ray & r, float &u, float &v, float &t);
 
     glm::vec3 n;

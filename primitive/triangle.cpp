@@ -21,6 +21,13 @@ triangle::triangle(const glm::vec3 & a,const glm::vec3 & b,const glm::vec3 & c,c
     this->n = glm::normalize(this->n);
     this->aabbBox._min=tmin;
     this->aabbBox._max=tmax;
+
+	float y = -(n.x / n.z);
+	glm::vec3 xAxis{ 1.0f, 0.0f, y };
+	xAxis = glm::normalize(xAxis);
+	if (n.z < 0)
+		xAxis = -xAxis;
+	yAxis = glm::normalize(glm::cross(n, xAxis));
 }
 
 triangle::triangle(const glm::vec3 &a,const glm::vec3 &b,const glm::vec3 &c,std::shared_ptr<materialBase> _mat):
@@ -48,6 +55,13 @@ triangle::triangle(const glm::vec3 &a,const glm::vec3 &b,const glm::vec3 &c,std:
     tmax.z=std::max(pa.z,std::max(pb.z,pc.z)) + epslion;
     this->aabbBox._min=tmin;
     this->aabbBox._max=tmax;
+
+	float y = -(n.x / n.z);
+	glm::vec3 xAxis{ 1.0f, 0.0f, y };
+	xAxis = glm::normalize(xAxis);
+	if (n.z < 0)
+		xAxis = -xAxis;
+	yAxis = glm::normalize(glm::cross(n, xAxis));
 }
 
 glm::vec3 triangle::normal(const glm::vec3 &surPos)
@@ -124,6 +138,16 @@ void triangle::handleMatrix()
     this->aabbBox._max.z = std::max(std::max(pa.z, pb.z), pc.z) + epslion;
 }
 
+glm::vec3 triangle::hitXAxis(const glm::vec3 & hitPos)
+{
+	return xAxis;
+}
+
+glm::vec3 triangle::hitYAxis(const glm::vec3 & hitPos)
+{
+	return yAxis;
+}
+
 bool triangle::rayTriangle(ray &r,float &u,float &v,float &t)
 {
     //moller's ray triangle algorithm
@@ -178,7 +202,9 @@ bool triangle::hit(ray &r, hitRecord &h, float minT, float maxT)
 
         h.hitNormal = this->normal(h.hitPos);
         h.hitReflect = reflect(r.direc, h.hitNormal);
-        h.hitOutDirec = directionGenerator::getInstance().generate(h.hitPos, h.hitNormal);
+        auto generateRes = directionPdfAdaptor::getInstance().generate(h.hitPos, h.hitNormal, h.hitRoughnessX, h.hitRoughnessY);
+		h.hitInDirec = r.direc;
+        h.hitOutDirec = glm::vec3(generateRes);
 
         //calculate xAxis and yAxis
         //here we simply cross normal and X axis to get 'xAxis' then get 'yAxis'
@@ -229,8 +255,9 @@ bool triangle::hit(ray &r, hitRecord &h, float minT, float maxT)
             h.hitOutDirec = h.hitRefract;
         }
 
-        h.hitPdf = directionGenerator::getInstance().value(h.hitOutDirec);
+        h.hitPdf = generateRes.w;
         h.matPtr = this->mat;
+		//h.priPtr = std::make_shared<primitiveBase>(this);
 
         return true;
     }
@@ -254,20 +281,20 @@ std::vector<std::vector<float>> triangle::getModelLinesAndColors()
     //first line
     pushData(verts, pa);
     pushData(verts, pb);
-    pushData(colors, this->mat->tex->baseColor(0, 0, glm::vec3(0), glm::vec3(0)));
-    pushData(colors, this->mat->tex->baseColor(0, 0, glm::vec3(0), glm::vec3(0)));
+    pushData(colors, this->mat->tex->baseColor(0, 0, glm::vec3(0)));
+    pushData(colors, this->mat->tex->baseColor(0, 0, glm::vec3(0)));
 
     //second line
     pushData(verts, pb);
     pushData(verts, pc);
-    pushData(colors, this->mat->tex->baseColor(0, 0, glm::vec3(0), glm::vec3(0)));
-    pushData(colors, this->mat->tex->baseColor(0, 0, glm::vec3(0), glm::vec3(0)));
+    pushData(colors, this->mat->tex->baseColor(0, 0, glm::vec3(0)));
+    pushData(colors, this->mat->tex->baseColor(0, 0, glm::vec3(0)));
 
     //third line
     pushData(verts, pc);
     pushData(verts, pa);
-    pushData(colors, this->mat->tex->baseColor(0, 0, glm::vec3(0), glm::vec3(0)));
-    pushData(colors, this->mat->tex->baseColor(0, 0, glm::vec3(0), glm::vec3(0)));
+    pushData(colors, this->mat->tex->baseColor(0, 0, glm::vec3(0)));
+    pushData(colors, this->mat->tex->baseColor(0, 0, glm::vec3(0)));
 
     return {verts, colors};
 }

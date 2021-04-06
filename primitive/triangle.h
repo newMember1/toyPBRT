@@ -1,7 +1,7 @@
 #ifndef TRIANGLE_H
 #define TRIANGLE_H
 #include "./core/primitiveBase.h"
-#include "./core/directionGenerator.h"
+#include "./core/directionPdfAdaptor.h"
 
 class triangle :public primitiveBase
 {
@@ -19,6 +19,9 @@ public:
     void setNonUniformScale(const glm::vec3 &s) override;
     void setModelMatrix(const glm::mat4 &m) override;
     void handleMatrix() override;
+	glm::vec3 hitXAxis(const glm::vec3 & hitPos) override;
+	glm::vec3 hitYAxis(const glm::vec3 & hitPos) override;
+
     bool rayTriangle(ray &r,float &u,float &v,float &t);
     void setTriangle(glm::vec3 & a, glm::vec3 & b, glm::vec3 & c, glm::vec3 & n);
     glm::vec3 pa;

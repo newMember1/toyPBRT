@@ -23,7 +23,7 @@ basicBRDFMaterial::basicBRDFMaterial(std::shared_ptr<texture> texture, float m, 
 glm::vec3 basicBRDFMaterial::albedo(const hitRecord &hitRec, const glm::vec3 &lightDirec, const glm::vec3 &eyeDirec)
 {
 	// ref:learnopengl-cn : radiance
-    vec3 baseColor = tex->baseColor(hitRec.u, hitRec.v, hitRec.hitPos, hitRec.hitOutDirec);
+    vec3 baseColor = tex->baseColor(hitRec.u, hitRec.v, hitRec.hitPos);
 	vec3 N = normalize(hitRec.hitNormal);
 	vec3 V = normalize(eyeDirec);
 

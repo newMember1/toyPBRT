@@ -7,7 +7,7 @@
 class cosinePdf: public pdfBase
 {
 public:
-    glm::vec3 generate(const glm::vec3 & p) const override
+    glm::vec3 generate(const glm::vec3 & p, float roughnessA, float roughnessB) const override
     {
         uvw.buildFromW(p);
         return glm::normalize(uvw.local(this->randomCosineDirection()));
@@ -17,6 +17,11 @@ public:
     {
         auto cosine = glm::dot(glm::normalize(direction), uvw.w());
         return (cosine <= 0) ? 0: cosine / PI;
+    }
+
+    lightType type() const override
+    {
+        return lightType::diffuse;
     }
 
 private:

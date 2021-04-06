@@ -24,6 +24,8 @@ public:
     virtual void setNonUniformScale(const glm::vec3 & s) = 0;
     virtual void setRotate(const glm::vec3 & rotateAxis, float angle) = 0;
     virtual void setModelMatrix(const glm::mat4 & m) = 0;
+	virtual glm::vec3 hitXAxis(const glm::vec3 & hitPos) = 0;
+	virtual glm::vec3 hitYAxis(const glm::vec3 & hitPos) = 0;
 
     bool refract(const glm::vec3 & v, const glm::vec3 & n, float niOvernt, glm::vec3 & refracted)
     {
@@ -39,6 +41,8 @@ public:
     }
 
     primitiveType pType;
+	glm::vec3 xAxis;
+	glm::vec3 yAxis;
 
     aabb aabbBox;
     std::shared_ptr<materialBase> mat=nullptr;

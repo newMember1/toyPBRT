@@ -1,9 +1,9 @@
 #include "rectangle.h"
-#include "core/directionGenerator.h"
+#include "core/directionPdfAdaptor.h"
 #include <algorithm>
 extern bool debugFlag;
 
-rectangle::rectangle(const glm::vec3 & _oriPos, const glm::vec3 & _wDirec, const glm::vec3 & _hDirec, float _w, float _h, std::shared_ptr<materialBase> _mat)
+rectangle::rectangle(const glm::vec3 & _oriPos, const glm::vec3 & _wDirec, const glm::vec3 & _hDirec, float _w, float _h, std::shared_ptr<materialBase> _mat, bool flipNormal)
     :primitiveBase(_mat)
 {
     pType = primitiveType::rectangle;
@@ -18,6 +18,8 @@ rectangle::rectangle(const glm::vec3 & _oriPos, const glm::vec3 & _wDirec, const
     this->pd = oriPos + glm::normalize(hDirec) * h;
     this->pc = pb + glm::normalize(hDirec) * h;
     this->n = glm::normalize(glm::cross(wDirec, hDirec));
+	if (flipNormal)
+        this->n = -this->n;
 
     glm::vec3 tmin{1.0};
     glm::vec3 tmax{1.0};
@@ -32,6 +34,13 @@ rectangle::rectangle(const glm::vec3 & _oriPos, const glm::vec3 & _wDirec, const
 
     this->aabbBox._min=tmin;
     this->aabbBox._max=tmax;
+
+	float y = -(n.x / n.z);
+	glm::vec3 xAxis{ 1.0f, 0.0f, y };
+	xAxis = glm::normalize(xAxis);
+	if (n.z < 0)
+		xAxis = -xAxis;
+	yAxis = glm::normalize(glm::cross(n, xAxis));
 }
 
 glm::vec3 rectangle::normal(const glm::vec3 &surPos)
@@ -51,26 +60,26 @@ std::vector<std::vector<float>> rectangle::getModelLinesAndColors()
     //first line
     pushData(verts, pa);
     pushData(verts, pb);
-    pushData(colors, this->mat->tex->baseColor(0, 0, glm::vec3(0), glm::vec3(0)));
-    pushData(colors, this->mat->tex->baseColor(0, 0, glm::vec3(0), glm::vec3(0)));
+    pushData(colors, this->mat->tex->baseColor(0, 0, glm::vec3(0)));
+    pushData(colors, this->mat->tex->baseColor(0, 0, glm::vec3(0)));
 
     //second line
     pushData(verts, pb);
     pushData(verts, pc);
-    pushData(colors, this->mat->tex->baseColor(0, 0, glm::vec3(0), glm::vec3(0)));
-    pushData(colors, this->mat->tex->baseColor(0, 0, glm::vec3(0), glm::vec3(0)));
+    pushData(colors, this->mat->tex->baseColor(0, 0, glm::vec3(0)));
+    pushData(colors, this->mat->tex->baseColor(0, 0, glm::vec3(0)));
 
     //third line
     pushData(verts, pc);
     pushData(verts, pd);
-    pushData(colors, this->mat->tex->baseColor(0, 0, glm::vec3(0), glm::vec3(0)));
-    pushData(colors, this->mat->tex->baseColor(0, 0, glm::vec3(0), glm::vec3(0)));
+    pushData(colors, this->mat->tex->baseColor(0, 0, glm::vec3(0)));
+    pushData(colors, this->mat->tex->baseColor(0, 0, glm::vec3(0)));
 
     //fourth line
     pushData(verts, pd);
     pushData(verts, pa);
-    pushData(colors, this->mat->tex->baseColor(0, 0, glm::vec3(0), glm::vec3(0)));
-    pushData(colors, this->mat->tex->baseColor(0, 0, glm::vec3(0), glm::vec3(0)));
+    pushData(colors, this->mat->tex->baseColor(0, 0, glm::vec3(0)));
+    pushData(colors, this->mat->tex->baseColor(0, 0, glm::vec3(0)));
 
     return {verts, colors};
 }
@@ -188,7 +197,9 @@ bool rectangle::hit(ray &r, hitRecord &h, float minT, float maxT)
 
         h.hitNormal = normal(h.hitPos);
         h.hitReflect = reflect(r.direc, h.hitNormal);
-        h.hitOutDirec = directionGenerator::getInstance().generate(h.hitPos, h.hitNormal);
+        auto generateRes = directionPdfAdaptor::getInstance().generate(h.hitPos, h.hitNormal, h.hitRoughnessX, h.hitRoughnessY);
+		h.hitInDirec = r.direc;
+        h.hitOutDirec = glm::vec3(generateRes);
 
         //for refract's calculate
         if(mat->type == materialType::dielectrics)
@@ -211,8 +222,11 @@ bool rectangle::hit(ray &r, hitRecord &h, float minT, float maxT)
             h.hitOutDirec = h.hitRefract;
         }
 
-        h.hitPdf = directionGenerator::getInstance().value(h.hitOutDirec);
+        h.hitPdf = generateRes.w;
         h.matPtr = this->mat;
+		h.invModel = this->invModelMatrix;
+		h.xAxis = this->hitXAxis(h.hitPos);
+		h.yAxis = this->hitYAxis(h.hitPos);
 
         return true;
     }
@@ -235,4 +249,16 @@ void rectangle::handleMatrix()
     this->aabbBox._max.x = std::max(std::max(pa.x, pb.x), std::max(pc.x, pd.x)) + epslion;
     this->aabbBox._max.y = std::max(std::max(pa.y, pb.y), std::max(pc.y, pd.y)) + epslion;
     this->aabbBox._max.z = std::max(std::max(pa.z, pb.z), std::max(pc.z, pd.z)) + epslion;
+}
+
+glm::vec3 rectangle::hitXAxis(const glm::vec3 & hitPos)
+{
+	//default x axis parallel to XOZ
+	return xAxis;
+}
+
+glm::vec3 rectangle::hitYAxis(const glm::vec3 & hitPos)
+{
+	//y axis is related with x axis
+	return yAxis;
 }

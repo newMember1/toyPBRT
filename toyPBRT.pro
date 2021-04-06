@@ -24,7 +24,7 @@ INCLUDEPATH += /home/zdxiao/Desktop/GLM
 SOURCES += \
     3rdparty/stb_image.cpp \
     accelerate/bvh.cpp \
-    core/directionGenerator.cpp \
+    core/directionPdfAdaptor.cpp \
     core/primitiveList.cpp \
     core/scenebase.cpp \
     core/scenelists.cpp \
@@ -57,7 +57,7 @@ HEADERS += \
     collision/aabb.h \
     core/baseStructure.h \
     core/cameraBase.h \
-    core/directionGenerator.h \
+    core/directionPdfAdaptor.h \
     core/hitRecord.h \
     core/materialBase.h \
     core/onb.h \
@@ -77,6 +77,7 @@ HEADERS += \
     modelLoader/objloader.h \
     models/tiny_obj_loader.h \
     pdf/cosinePdf.h \
+    pdf/ggxPdf.h \
     pdf/randomPdf.h \
     pdf/rectLightPdf.h \
     pdf/sphereLightPdf.h \

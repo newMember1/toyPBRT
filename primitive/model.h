@@ -21,6 +21,9 @@ public:
     void setModelMatrix(const glm::mat4 &m) override;
     bool boxHit(const ray &r, float minT, float maxT) override;
     void handleMatrix() override;
+	virtual glm::vec3 hitXAxis(const glm::vec3 & hitPos);
+	virtual glm::vec3 hitYAxis(const glm::vec3 & hitPos);
+	
 private:
     std::vector<glm::vec3> verts;
     std::vector<std::vector<int>> vIndexs;

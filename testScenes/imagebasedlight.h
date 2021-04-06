@@ -24,7 +24,8 @@ private:
     virtual void createMatrials() override;
     virtual void createObjects() override;
 
-    string envMap = ":/pictures/resources/Mt-Washington-Gold-Room_Bg";
+    string envMap = "C:/Users/zd-Xiao/Desktop/toyPBRT/resources/Mt-Washington-Gold-Room_Bg.jpg";
+//    string envMap = ":/pictures/resources/Mt-Washington-Gold-Room_Bg";
     string ironMap = "";
 };
 

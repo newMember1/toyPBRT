@@ -4,7 +4,7 @@
 #include <fstream>
 #include <sstream>
 #include <thread>
-#include "./core/directionGenerator.h"
+#include "./core/directionPdfAdaptor.h"
 #include "./pdf/cosinePdf.h"
 #include "./pdf/rectLightPdf.h"
 #include "./materials/disneybrdfmaterial.h"
@@ -165,7 +165,7 @@ void MainWindow::render()
                 glm::vec3 c(0);
                 for(int k = 0; k < ns; ++k)
                 {
-                    if(i == 50 && j == 50 && k == 0)
+                    if(i == 48 && j == 50 && k == 0)
                         debugFlag=true;
                     else
                         debugFlag=false;

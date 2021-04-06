@@ -12,7 +12,7 @@ public:
         lightRect = rec;
     }
 
-    glm::vec3 generate(const glm::vec3 & p) const override
+    glm::vec3 generate(const glm::vec3 & p, float roughnessA, float roughnessB) const override
     {
         float e1 = drand48();
         float e2 = drand48();
@@ -32,6 +32,11 @@ public:
         float dis2 = toLight.length() * toLight.length();
         float cosTheta = glm::dot(glm::normalize(-toLight), lightRect->normal(glm::vec3(0)));
         return dis2 / (area * cosTheta);
+    }
+
+    lightType type() const override
+    {
+        return lightType::rectangle;
     }
 
 private:

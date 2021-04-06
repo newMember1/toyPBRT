@@ -9,5 +9,5 @@ simpleMaterial::simpleMaterial(std::shared_ptr<texture> tex)
 glm::vec3 simpleMaterial::albedo(const hitRecord &hitRec, const glm::vec3 &inDirec, const glm::vec3 &outDirec)
 {
     //simple material don't consider the energy dispear
-    return this->tex->baseColor(hitRec.u, hitRec.v, hitRec.hitPos, hitRec.hitOutDirec);
+    return this->tex->baseColor(hitRec.u, hitRec.v, hitRec.hitPos);
 }
