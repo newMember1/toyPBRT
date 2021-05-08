@@ -26,6 +26,11 @@ void primitiveList::setMode(colorMode m)
     mode = m;
 }
 
+void primitiveList::setFog(bool f)
+{
+	fog = f;
+}
+
 void primitiveList::addPrimitive(std::shared_ptr<primitiveBase> ptr)
 {
     pList.push_back(std::move(ptr));
@@ -213,6 +218,8 @@ glm::vec3 primitiveList::colorIterator(ray &r, int times)
                 std::cout<<"h.hitOutDirec: "<<h.hitOutDirec.x<<" "<<h.hitOutDirec.y<<" "<<h.hitOutDirec.z<<std::endl<<std::endl;
             }
 
+			if (fog)
+				res = applyFog(res, h.t, r.pos, r.direc);
             //if light
             if(h.matPtr->isLight)
             { 

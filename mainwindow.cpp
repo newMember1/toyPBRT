@@ -41,6 +41,7 @@ void MainWindow::initPBRTResource()
     //connect signal
     connect(ui->renderBotton, &QPushButton::clicked, this, &MainWindow::render);
     connect(ui->checkBox_multiThread, &QCheckBox::clicked, this, &MainWindow::enableMultiThreads);
+    connect(ui->checkBox_fog, &QCheckBox::clicked, this, &MainWindow::enableFog);
     connect(ui->actionTraceRays, SIGNAL(triggered(bool)), this, SLOT(setShowDebugRay(bool)));
     connect(ui->colorIter, SIGNAL(clicked(bool)), this, SLOT(setColorMode()));
     connect(ui->colorRec, SIGNAL(clicked(bool)), this, SLOT(setColorMode()));
@@ -72,6 +73,14 @@ void MainWindow::enableMultiThreads()
         this->multiThreads=true;
     else
         this->multiThreads=false;
+}
+
+void MainWindow::enableFog()
+{
+	if (this->ui->checkBox_fog->isChecked())
+		this->fog = true;
+	else
+		this->fog = false;
 }
 
 void MainWindow::setColorMode()
@@ -124,6 +133,7 @@ void MainWindow::render()
      */
 
     scenes->getLists()->setMode(colorMode(mode));
+	scenes->getLists()->setFog(fog);
     const int numThread=std::thread::hardware_concurrency();
     if(this->multiThreads)
     {
