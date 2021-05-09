@@ -71,7 +71,6 @@ const float N = 2.504 * 10e25;
 const float H = 8500;
 const glm::vec3 lambda4{ glm::pow(glm::vec3(680 * 10e-9, 550 * 10e-9, 440 * 10e-9), glm::vec3(4.0f)) };
 const glm::vec3 beta = -8 * pow(PI, 3) * std::pow(n * n - 1, 2) / 3 / N / lambda4;
-const glm::vec3 beta = {0.00000519673, 0.0000121427, 0.0000296453};
 inline glm::vec3 applyTransmittance(const glm::vec3 viewPos, const glm::vec3 hitPos)
 {
 	//only consider T(PA)
