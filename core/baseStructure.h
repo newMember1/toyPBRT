@@ -65,19 +65,24 @@ inline glm::vec3 applyFog(glm::vec3 rgb, float distance, glm::vec3 viewPos , glm
 	return glm::mix(rgb, fogColor, fogAmount);
 }
 
-//this can only be used in atmosphric scattering
-//const float n = 1.00029;
-//const float N = 2.504 * 10e25;
-//const glm::vec3 lambda4{ glm::pow(glm::vec3(680 * 10e-9, 550 * 10e-9, 440 * 10e-9), glm::vec3(4.0f)) };
-//const glm::vec3 beta = -8 * pow(PI, 3) * std::pow(n * n - 1, 2) / 3 / N / lambda4;
+//this can only be used in atmospheric scattering
+const float n = 1.00029;
+const float N = 2.504 * 10e25;
 const float H = 8500;
-const glm::vec3 beta = {0.00000519673, 0.0000121427, 0.0000296453};
+const glm::vec3 lambda4{ glm::pow(glm::vec3(680 * 10e-9, 550 * 10e-9, 440 * 10e-9), glm::vec3(4.0f)) };
+const glm::vec3 beta = -8 * pow(PI, 3) * std::pow(n * n - 1, 2) / 3 / N / lambda4;
 inline glm::vec3 applyTransmittance(const glm::vec3 viewPos, const glm::vec3 hitPos)
 {
 	//only consider T(PA)
 	float opticalDepth = -H * (exp(-hitPos.y / H) - exp(-viewPos.y / H));
 	glm::vec3 betaD = -beta * opticalDepth;
 	return glm::exp(betaD);
+}
+
+//this can be only used in atmospheric scattering
+inline glm::vec3 applyRayleighScattering(const float theta, const float h)
+{
+	return PI * PI * pow(n * n - 1, 2) / 2.0f / N * exp(-h / H) / lambda4 * (1 + cos(theta) * cos(theta));
 }
 
 struct ray
