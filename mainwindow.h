@@ -32,17 +32,19 @@ public slots:
     void setShowDebugRay(bool flag);
     void showDebugWindow();
     void enableMultiThreads();
+	void enableFog();
     void setColorMode();
 
 private:
     void initPBRTResource();
-    bool multiThreads=false;
+    bool multiThreads = false;
 
     std::vector<float> debugVertices;
     std::vector<float> debugColors;
 
     colorMode mode = colorMode::iterator;
 
+	bool fog = false;
     bool showDebugRay = false;
     std::vector<std::vector<float>> debugDatas;
     std::unique_ptr<oglDebugWindow> debugWindow = nullptr;

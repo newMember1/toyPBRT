@@ -12,6 +12,7 @@ public:
     primitiveList(std::vector<std::shared_ptr<primitiveBase>> &datas);
     primitiveList(std::unordered_map<std::string, std::shared_ptr<primitiveBase>> & datas);
     void setMode(colorMode m);
+	void setFog(bool f);;
     void addPrimitive(std::shared_ptr<primitiveBase> ptr);
     bool hit(ray &r,hitRecord &h,float minT,float maxT);
     glm::vec3 color(ray &r, int times);
@@ -29,6 +30,7 @@ private:
     glm::vec3 test(ray & r, int times);
 
     colorMode mode = colorMode::iterator;
+	bool fog = false;
     std::vector<float> debugVertices;
     std::vector<float> debugColors;
 };
