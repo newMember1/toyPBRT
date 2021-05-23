@@ -20,6 +20,10 @@ public:
 
     virtual ~cameraBase(){}
 
+	/*
+	 * when use camera
+	 * remember that i and j increse from left bottom to right top
+	*/
     virtual void emitRay(float x,float y,ray&r)
     {
         float dX=2.0/width*ratio;

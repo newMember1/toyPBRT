@@ -51,6 +51,8 @@ SOURCES += \
 HEADERS += \
     3rdparty/stb_image.h \
     3rdparty/tiny_obj_loader.h \
+	3rdparty/thread_pool/SafeQueue.h \
+	3rdparty/thread_pool/ThreadPool.h \
     accelerate/bvh.h \
     camera/fovCamera.h \
     camera/simplecamera.h \
