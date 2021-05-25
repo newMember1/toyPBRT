@@ -27,7 +27,7 @@ public:
     MainWindow(QWidget *parent = nullptr);
     virtual ~MainWindow();
 	static void pixelRender(std::unique_ptr<cameraBase> & cam, std::unique_ptr<primitiveList> & scenes, std::vector<glm::vec3> & pixels, int nx, int ny, int nk, int i, int j);
-    static void blockRender(std::unique_ptr<cameraBase> &cam,std::unique_ptr<primitiveList> &worldList,int xs,int xe,int ys,int ye,int nx,int ny,int ns,std::vector<glm::vec3> &pixels, std::vector<bool> &bools);
+    static void blockRender(std::unique_ptr<cameraBase> &cam,std::unique_ptr<primitiveList> &worldList,int xs,int xe,int ys,int ye,int nx,int ny,int ns,std::vector<glm::vec3> &pixels);
 
 public slots:
 	void rendering();

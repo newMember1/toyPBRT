@@ -28,6 +28,8 @@ MainWindow::MainWindow(QWidget *parent)
 MainWindow::~MainWindow()
 {
     delete ui;
+	if (pool != nullptr)
+		pool->shutdown();
 }
 
 void MainWindow::initPBRTResource()
@@ -179,18 +181,43 @@ void MainWindow::multiThreadsRender()
 		pool->init();
 	}
 
-	for (int i = 0; i < nx; ++i)
+	//block render
+	int taskPerThread;
+	if (nx % (numThreads - 1) == 0)
+		taskPerThread = nx / (numThreads - 1);
+	else
+		taskPerThread = nx / (numThreads - 1) + 1;
+
+	std::vector<std::future<void>> futures;
+
+	for (int i = 0; i < numThreads; ++i)
 	{
-		for (int j = 0; j < ny; ++j)
-		{
-			auto future = pool->submit(MainWindow::pixelRender, std::ref(cam), std::ref(scenes->getLists()), std::ref(pixels), nx, ny, nk, i, j);
-			future.get();
-		}
+		int xs, xe, ys, ye;
+		xs = taskPerThread * i;
+		xe = std::min(taskPerThread * (i + 1), nx);
+		ys = 0;
+		ye = ny;
+		auto future = pool->submit(MainWindow::blockRender, std::ref(cam), std::ref(scenes->getLists()), xs, xe, ys, ye, nx, ny, nk, std::ref(pixels));
+		futures.push_back(std::move(future));
 	}
+
+	for (int i = 0; i < futures.size(); ++i)
+	{
+		futures[i].get();
+	}
+
+	////pixel render
+	//for (int i = 0; i < nx; ++i)
+	//{
+	//	for (int j = 0; j < ny; ++j)
+	//	{
+	//		auto future = pool->submit(MainWindow::pixelRender, std::ref(cam), std::ref(scenes->getLists()), std::ref(pixels), nx, ny, nk, i, j);
+	//		future.get();
+	//	}
+	//}
 
 	time(&e);
 	std::cout << "multi thread render end with time: " << (double)(e - s) << "s" << std::endl;
-	//pool->shutdown();
 }
 
 void MainWindow::gammaCorrection()
@@ -211,7 +238,6 @@ void MainWindow::gammaCorrection()
 
 void MainWindow::writeToPPM()
 {
-	std::cout << "write to ppm image start." << std::endl;
 	//ppm file store datas by row
 	std::ofstream outFile("/home/zdxiao/Desktop/test.ppm");
 	outFile << "P3" << std::endl << ny << " " << nx << std::endl << 255 << std::endl;
@@ -224,12 +250,11 @@ void MainWindow::writeToPPM()
 		}
 	}
 	outFile.close();
-	std::cout << "write to ppm image end." << std::endl;
+	std::cout << "write to ppm image done." << std::endl << std::endl;
 }
 
 void MainWindow::writeToLabel()
 {
-	std::cout << "write to image label start." << std::endl;
 	for (int i = 0; i < nx; ++i)
 	{
 		for (int j = 0; j < ny; ++j)
@@ -244,7 +269,7 @@ void MainWindow::writeToLabel()
 	int h = ui->imageLabel->height();
 	pixmap = pixmap.scaled(w, h, Qt::KeepAspectRatio, Qt::SmoothTransformation);
 	ui->imageLabel->setPixmap(pixmap);
-	std::cout << "write to image label end." << std::endl;
+	std::cout << "write to image label done." << std::endl;
 }
 
 void MainWindow::setShowDebugRay(bool flag)
@@ -280,10 +305,11 @@ void MainWindow::pixelRender(std::unique_ptr<cameraBase> & cam, std::unique_ptr<
 	pixels[j + (nx - 1 - i) * ny] = c;
 }
 
-void MainWindow::blockRender(std::unique_ptr<cameraBase> &cam, std::unique_ptr<primitiveList> &worldList, int xs, int xe, int ys, int ye, int nx, int ny, int ns, std::vector<glm::vec3> &pixels, std::vector<bool> &bools)
+void MainWindow::blockRender(std::unique_ptr<cameraBase> &cam, std::unique_ptr<primitiveList> &worldList, int xs, int xe, int ys, int ye, int nx, int ny, int ns, std::vector<glm::vec3> &pixels)
 {
 	ray r(glm::vec3(0.0f), glm::vec3(1.0f));
 
+	//std::cout << "xs and xe: " << xs << " " << xe << std::endl;
 	for (int i = xs; i < xe; ++i)
 	{
 		for (int j = ys; j < ye; ++j)
@@ -296,7 +322,6 @@ void MainWindow::blockRender(std::unique_ptr<cameraBase> &cam, std::unique_ptr<p
 			}
 			c /= ns;
 			pixels[j + (nx - 1 - i) * ny] = c;
-			bools[j + (nx - 1 - i) * ny] = true;
 		}
 	}
 }
