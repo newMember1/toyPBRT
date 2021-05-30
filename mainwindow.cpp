@@ -239,7 +239,7 @@ void MainWindow::gammaCorrection()
 void MainWindow::writeToPPM()
 {
 	//ppm file store datas by row
-	std::ofstream outFile("/home/zdxiao/Desktop/test.ppm");
+	std::ofstream outFile("C:/Users/zd-xiao/Desktop/test.ppm");
 	outFile << "P3" << std::endl << ny << " " << nx << std::endl << 255 << std::endl;
 	for (int i = 0; i < nx; ++i)
 	{
