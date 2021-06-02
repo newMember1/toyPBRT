@@ -21,6 +21,7 @@ public:
     void handleMatrix() override;
 	glm::vec3 hitXAxis(const glm::vec3 & hitPos) override;
 	glm::vec3 hitYAxis(const glm::vec3 & hitPos) override;
+	std::shared_ptr<primitiveBase> deepCopy(std::shared_ptr<primitiveBase>) override;
 
     bool rayTriangle(ray &r,float &u,float &v,float &t);
     void setTriangle(glm::vec3 & a, glm::vec3 & b, glm::vec3 & c, glm::vec3 & n);

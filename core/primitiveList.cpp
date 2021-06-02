@@ -2,6 +2,18 @@
 #include<iostream>
 
 extern bool debugFlag;
+std::unique_ptr<primitiveList> primitiveList::deepCopy(std::unique_ptr<primitiveList> & p)
+{
+	/*
+	1.std::vector<std::shared_ptr<primitiveBase>> pList;
+	2.std::unique_ptr<bvh> allModels;
+	3.std::vector<float> debugVertices;
+    4.std::vector<float> debugColors;
+	*/
+
+	//1.copy pLists, so we should add a deepCopy virtual function for "primitiveBase"
+	std::vector<std::shared_ptr<primitiveBase>> pListCopy{ p->pList.size() };
+}
 
 primitiveList::primitiveList(std::vector<std::shared_ptr<primitiveBase>> &datas)
 {

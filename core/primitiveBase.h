@@ -26,6 +26,7 @@ public:
     virtual void setModelMatrix(const glm::mat4 & m) = 0;
 	virtual glm::vec3 hitXAxis(const glm::vec3 & hitPos) = 0;
 	virtual glm::vec3 hitYAxis(const glm::vec3 & hitPos) = 0;
+	virtual std::shared_ptr<primitiveBase> deepCopy(std::shared_ptr<primitiveBase>) = 0;
 
     bool refract(const glm::vec3 & v, const glm::vec3 & n, float niOvernt, glm::vec3 & refracted)
     {
