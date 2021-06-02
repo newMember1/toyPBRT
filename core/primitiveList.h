@@ -11,7 +11,6 @@ public:
     primitiveList(){}
     primitiveList(std::vector<std::shared_ptr<primitiveBase>> &datas);
     primitiveList(std::unordered_map<std::string, std::shared_ptr<primitiveBase>> & datas);
-	std::unique_ptr<primitiveList> deepCopy(std::unique_ptr<primitiveList> & p);
     void setMode(colorMode m);
 	void setFog(bool f);;
     void addPrimitive(std::shared_ptr<primitiveBase> ptr);

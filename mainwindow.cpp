@@ -180,10 +180,6 @@ void MainWindow::multiThreadsRender()
 		pool.reset(new ThreadPool(numThreads));
 		pool->init();
 	}
-	if (listScenes.size() == 0)
-	{
-
-	}
 
 	//block render
 	int taskPerThread;
@@ -202,8 +198,7 @@ void MainWindow::multiThreadsRender()
 		ys = 0;
 		ye = ny;
 		auto future = pool->submit(MainWindow::blockRender, std::ref(cam), std::ref(scenes->getLists()), xs, xe, ys, ye, nx, ny, nk, std::ref(pixels));
-		future.get();
-		//futures.push_back(std::move(future));
+		futures.push_back(std::move(future));
 	}
 
 	for (int i = 0; i < futures.size(); ++i)
@@ -314,6 +309,7 @@ void MainWindow::blockRender(std::unique_ptr<cameraBase> &cam, std::unique_ptr<p
 {
 	ray r(glm::vec3(0.0f), glm::vec3(1.0f));
 
+	//std::cout << "xs and xe: " << xs << " " << xe << std::endl;
 	for (int i = xs; i < xe; ++i)
 	{
 		for (int j = ys; j < ye; ++j)

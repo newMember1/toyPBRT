@@ -148,12 +148,6 @@ glm::vec3 triangle::hitYAxis(const glm::vec3 & hitPos)
 	return yAxis;
 }
 
-std::shared_ptr<primitiveBase> triangle::deepCopy(std::shared_ptr<primitiveBase>)
-{
-	auto t = std::make_shared<triangle>(pa, pb, pc, this->mat->deepCopy());
-	return std::dynamic_pointer_cast<primitiveBase>(t);
-}
-
 bool triangle::rayTriangle(ray &r,float &u,float &v,float &t)
 {
     //moller's ray triangle algorithm

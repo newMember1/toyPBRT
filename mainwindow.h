@@ -65,7 +65,7 @@ private:
 
 	//for multi thread rendering, we should at least n cams, n directionGenerator for each thread
 	std::unique_ptr<primitiveList[]> listScenes;
-	std::unique_ptr<cameraBase[]> cams;
+	std::unique_ptr<directionPdfAdaptor[]> direcAdaptors;
 	std::unique_ptr<ThreadPool> pool = nullptr;
 };
 #endif // MAINWINDOW_H
