@@ -3,6 +3,7 @@
 
 #include <unordered_map>
 #include <vector>
+#include <mutex>
 #include "./pdfBase.h"
 #include "./pdf/cosinePdf.h"
 #include "./pdf/randomPdf.h"
@@ -29,6 +30,7 @@ private:
     std::shared_ptr<pdfBase> lightPdf = nullptr;
 
     std::vector<shared_ptr<pdfBase>> lightPdfs;
+    std::mutex mMutex;
 };
 
 #endif // PDFGENERATE_H

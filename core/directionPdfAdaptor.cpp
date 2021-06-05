@@ -19,7 +19,8 @@ bool directionPdfAdaptor::chooseLight()
 
 glm::vec4 directionPdfAdaptor::generate(const glm::vec3 &surfPos, const glm::vec3 &surfNormal, float roughnessX, float roughnessY)
 {
-	if (debugFlag)
+    std::lock_guard<std::mutex> guard(mMutex);
+    if (debugFlag)
 		int a = 1;
     float r = drand48();
     if(r < 0)
