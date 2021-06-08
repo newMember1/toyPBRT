@@ -6,9 +6,9 @@
 class disneyBRDFMaterial :public materialBase
 {
 public:
-    disneyBRDFMaterial(float _subSurface,float _metallic,float _specular,float _roughness,float _specularTint,float _anisotropic,float _sheen,float _sheenTint,float _clearCoat,float _clearCoatGloss,std::shared_ptr<texture> _tex);
+    disneyBRDFMaterial(float _subSurface,float _metallic,float _specular,float _roughness,float _specularTint,float _anisotropic,float _sheen,float _sheenTint,float _clearCoat,float _clearCoatGloss,std::shared_ptr<textureBase> _tex);
 
-    disneyBRDFMaterial(std::shared_ptr<texture> _tex);
+    disneyBRDFMaterial(std::shared_ptr<textureBase> _tex);
 
     glm::vec3 albedo(const hitRecord &hitRec,const glm::vec3 & lightDirec,const glm::vec3 & eyeDirec) override;
 

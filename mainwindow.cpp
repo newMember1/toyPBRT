@@ -169,6 +169,7 @@ void MainWindow::singleThreadRender()
 
 void MainWindow::multiThreadsRender()
 {
+    std::cout<<"cause race condition, multiThreadsRender will some times not correct"<<std::endl;
 	std::cout << "multi thread render start." << std::endl;
 	time_t s, e;
 	time(&s);

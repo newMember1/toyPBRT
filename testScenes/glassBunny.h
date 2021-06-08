@@ -28,11 +28,11 @@ private:
     glm::vec3 x{1, 0, 0};
     glm::vec3 y{0, 1, 0};
     glm::vec3 z{0, 0, 1};
-    unordered_map<std::string, shared_ptr<texture>> textures;
+    unordered_map<std::string, shared_ptr<textureBase>> textures;
     unordered_map<std::string, shared_ptr<materialBase>> materials;
     unordered_map<std::string, shared_ptr<primitiveBase>> objects;
 
-    shared_ptr<texture> getTexture(string name);
+    shared_ptr<textureBase> getTexture(string name);
     shared_ptr<materialBase> getMatrial(string name);
     shared_ptr<primitiveBase> getObject(string name);
 

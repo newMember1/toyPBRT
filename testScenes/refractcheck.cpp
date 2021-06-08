@@ -10,11 +10,11 @@ refractCheck::refractCheck()
 void refractCheck::createTextures()
 {
     auto green = std::make_shared<constTexture>(glm::vec3(0.8, 0.8, 0.0));
-    auto greenBase = std::dynamic_pointer_cast<texture>(std::move(green));
+    auto greenBase = std::dynamic_pointer_cast<textureBase>(std::move(green));
     textures["greenTex"] = greenBase;
 
     auto blue = std::make_shared<constTexture>(glm::vec3(0.1, 0.2, 0.5));
-    auto blueBase = std::dynamic_pointer_cast<texture>(std::move(blue));
+    auto blueBase = std::dynamic_pointer_cast<textureBase>(std::move(blue));
     textures["blueTex"] = blueBase;
 }
 
@@ -61,7 +61,7 @@ void refractCheck::createObjects()
 
 using std::cout;
 using std::endl;
-shared_ptr<texture> refractCheck::getTexture(string name)
+shared_ptr<textureBase> refractCheck::getTexture(string name)
 {
     if(textures.find(name) != textures.end())
         return textures[name];

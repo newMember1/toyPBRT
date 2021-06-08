@@ -30,7 +30,7 @@ private:
     void loadObjects(std::string path);
 
     std::unordered_map<std::string,std::shared_ptr<primitiveBase>> objects;
-    std::unordered_map<std::string,std::shared_ptr<texture>> textures;
+    std::unordered_map<std::string,std::shared_ptr<textureBase>> textures;
     std::unordered_map<std::string,std::shared_ptr<materialBase>> materials;
     std::unordered_map<std::string,std::shared_ptr<primitiveBase>> lightObjects;
     std::unique_ptr<primitiveList> worldList;

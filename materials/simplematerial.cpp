@@ -1,6 +1,6 @@
 #include "simplematerial.h"
 
-simpleMaterial::simpleMaterial(std::shared_ptr<texture> tex)
+simpleMaterial::simpleMaterial(std::shared_ptr<textureBase> tex)
     :materialBase(tex)
 {
     type = materialType::simpleMaterial;

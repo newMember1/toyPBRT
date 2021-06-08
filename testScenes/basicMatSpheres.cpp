@@ -11,14 +11,14 @@ basicMatSpheres::basicMatSpheres()
 void basicMatSpheres::createTextures()
 {
     auto red = std::make_shared<constTexture>(glm::vec3(0.5, 0, 0));
-    auto redBase = std::dynamic_pointer_cast<texture>(std::move(red));
+    auto redBase = std::dynamic_pointer_cast<textureBase>(std::move(red));
     textures["redTex"] = redBase;
 
     for(int i = 0; i < lightColors.size(); ++i)
     {
         auto lc = lightColors[i];
         auto lcolor = std::make_shared<constTexture>(lc);
-        auto lcolorBase = std::dynamic_pointer_cast<texture>(std::move(lcolor));
+        auto lcolorBase = std::dynamic_pointer_cast<textureBase>(std::move(lcolor));
         textures["lightColor" + std::to_string(i)] = lcolorBase;
     }
 }
@@ -77,7 +77,7 @@ void basicMatSpheres::createObjects()
 
 using std::cout;
 using std::endl;
-shared_ptr<texture> basicMatSpheres::getTexture(string name)
+shared_ptr<textureBase> basicMatSpheres::getTexture(string name)
 {
     if(textures.find(name) != textures.end())
         return textures[name];

@@ -10,19 +10,19 @@ disneyMatObjects::disneyMatObjects()
 void disneyMatObjects::createTextures()
 {
     auto gold = std::make_shared<constTexture>(glm::vec3(1.0f, 0.82f, 0.61f));
-    auto goldBase = std::dynamic_pointer_cast<texture>(std::move(gold));
+    auto goldBase = std::dynamic_pointer_cast<textureBase>(std::move(gold));
     textures["goldTex"] = goldBase;
 
     auto red = std::make_shared<constTexture>(glm::vec3(0.65, 0.05, 0.05));
-    auto redBase = std::dynamic_pointer_cast<texture>(std::move(red));
+    auto redBase = std::dynamic_pointer_cast<textureBase>(std::move(red));
     textures["redTex"] = redBase;
 
     auto green = std::make_shared<constTexture>(glm::vec3(0.12, 0.45, 0.15));
-    auto greenBase = std::dynamic_pointer_cast<texture>(std::move(green));
+    auto greenBase = std::dynamic_pointer_cast<textureBase>(std::move(green));
     textures["greenTex"] = greenBase;
 
     auto light = std::make_shared<constTexture>(glm::vec3(1.0f));
-    auto lightBase = std::dynamic_pointer_cast<texture>(std::move(light));
+    auto lightBase = std::dynamic_pointer_cast<textureBase>(std::move(light));
     textures["lightTex"] = lightBase;
 }
 
@@ -129,7 +129,7 @@ void disneyMatObjects::createObjects()
 
 using std::cout;
 using std::endl;
-shared_ptr<texture> disneyMatObjects::getTexture(string name)
+shared_ptr<textureBase> disneyMatObjects::getTexture(string name)
 {
     if(textures.find(name) != textures.end())
         return textures[name];

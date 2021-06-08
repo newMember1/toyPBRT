@@ -5,7 +5,7 @@
 class simpleMaterial : public materialBase
 {
 public:
-    simpleMaterial(std::shared_ptr<texture> tex);
+    simpleMaterial(std::shared_ptr<textureBase> tex);
     glm::vec3 albedo(const hitRecord & hitRec, const glm::vec3 & inDirec, const glm::vec3 & outDirec) override;
 };
 

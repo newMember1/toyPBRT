@@ -24,11 +24,11 @@ shared_ptr<cameraBase> imageBasedLight::getCamera(int width, int height, float f
 void imageBasedLight::createTextures()
 {
     auto env = std::make_shared<envImageTexture>(envMap.c_str());
-    auto envBase = std::dynamic_pointer_cast<texture>(env);
+    auto envBase = std::dynamic_pointer_cast<textureBase>(env);
     textures["envTex"] = envBase;
 
     auto red = std::make_shared<constTexture>(glm::vec3(0.5, 0, 0));
-    auto redBase = std::dynamic_pointer_cast<texture>(std::move(red));
+    auto redBase = std::dynamic_pointer_cast<textureBase>(std::move(red));
     textures["redTex"] = redBase;
 }
 

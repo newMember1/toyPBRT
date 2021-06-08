@@ -7,8 +7,8 @@ using namespace glm;
 class basicBRDFMaterial : public materialBase
 {
 public:
-    basicBRDFMaterial(std::shared_ptr<texture> texture);
-    basicBRDFMaterial(std::shared_ptr<texture> texture, float m, float r);
+    basicBRDFMaterial(std::shared_ptr<textureBase> textureBase);
+    basicBRDFMaterial(std::shared_ptr<textureBase> textureBase, float m, float r);
 
     void setMetallic(float m);
     void setRoughness(float r);

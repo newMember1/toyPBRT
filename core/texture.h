@@ -8,10 +8,10 @@
 #include "./3rdparty/stb_image.h"
 #include "hitRecord.h"
 
-class texture
+class textureBase
 {
 public:
-    virtual ~texture(){}
+    virtual ~textureBase(){}
 
 	virtual glm::vec3 baseColor(const hitRecord & hitRec)
 	{
@@ -40,7 +40,7 @@ public:
     }
 };
 
-class constTexture:public texture
+class constTexture:public textureBase
 {
 public:
      constTexture(const glm::vec3 &c)
@@ -73,7 +73,7 @@ private:
      glm::vec3 color{0};
 };
 
-class imageTexture:public texture
+class imageTexture:public textureBase
 {
 public:
     imageTexture(const char * path, bool flip = false)
@@ -127,7 +127,7 @@ private:
     int nx,ny,nc;
 };
 
-class envImageTexture:public texture
+class envImageTexture:public textureBase
 {
 public:
     envImageTexture(const char * path, bool flip = false)
@@ -196,7 +196,7 @@ private:
     int nx,ny,nc;
 };
 
-class checkTexture:public texture
+class checkTexture:public textureBase
 {
 public:  
     checkTexture(const glm::vec3 &a,const glm::vec3 &b):

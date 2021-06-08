@@ -96,23 +96,23 @@ void sceneLists::loadTexture(std::string path)
     std::cout<<"loadTextures."<<std::endl;
 
     auto red = std::make_shared<constTexture>(glm::vec3(0.65, 0.05, 0.05));
-    auto redBase = std::dynamic_pointer_cast<texture>(std::move(red));
+    auto redBase = std::dynamic_pointer_cast<textureBase>(std::move(red));
     textures["redTex"] = redBase;
 
     auto green = std::make_shared<constTexture>(glm::vec3(0.12, 0.45, 0.15));
-    auto greenBase = std::dynamic_pointer_cast<texture>(std::move(green));
+    auto greenBase = std::dynamic_pointer_cast<textureBase>(std::move(green));
     textures["greenTex"] = greenBase;
 
     auto blue = std::make_shared<constTexture>(glm::vec3(0, 0, 1.0f));
-    auto blueBase = std::dynamic_pointer_cast<texture>(std::move(blue));
+    auto blueBase = std::dynamic_pointer_cast<textureBase>(std::move(blue));
     textures["blueTex"] = blueBase;
 
     auto gold = std::make_shared<constTexture>(glm::vec3(1.022f,0.782f,0.344f));
-    auto goldBase = std::dynamic_pointer_cast<texture>(std::move(gold));
+    auto goldBase = std::dynamic_pointer_cast<textureBase>(std::move(gold));
     textures["goldTex"] = goldBase;
 
     auto white = std::make_shared<constTexture>(glm::vec3(1.0f));
-    auto whiteBase = std::dynamic_pointer_cast<texture>(std::move(white));
+    auto whiteBase = std::dynamic_pointer_cast<textureBase>(std::move(white));
     textures["whiteTex"] = whiteBase;
 
     std::cout<<"loadTextures done."<<std::endl<<std::endl;

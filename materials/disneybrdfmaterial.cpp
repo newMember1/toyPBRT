@@ -1,6 +1,6 @@
 #include "disneybrdfmaterial.h"
 
-disneyBRDFMaterial::disneyBRDFMaterial(float _subSurface,float _metallic,float _specular,float _roughness,float _specularTint,float _anisotropic,float _sheen,float _sheenTint,float _clearCoat,float _clearCoatGloss,std::shared_ptr<texture> _tex)
+disneyBRDFMaterial::disneyBRDFMaterial(float _subSurface,float _metallic,float _specular,float _roughness,float _specularTint,float _anisotropic,float _sheen,float _sheenTint,float _clearCoat,float _clearCoatGloss,std::shared_ptr<textureBase> _tex)
     :materialBase(_tex)
 {
     type = materialType::disneyBRDFMaterial;
@@ -21,7 +21,7 @@ disneyBRDFMaterial::disneyBRDFMaterial(float _subSurface,float _metallic,float _
     ay=glm::max(0.001f, glm::pow(roughness, 2.0f)*aspect);
 }
 
-disneyBRDFMaterial::disneyBRDFMaterial(std::shared_ptr<texture> _tex)
+disneyBRDFMaterial::disneyBRDFMaterial(std::shared_ptr<textureBase> _tex)
     :materialBase(_tex)
 {
     type = materialType::disneyBRDFMaterial;

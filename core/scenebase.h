@@ -20,14 +20,14 @@ public:
     virtual unordered_map<std::string, shared_ptr<primitiveBase>> getAllObjects();
     virtual shared_ptr<cameraBase> getCamera(int width, int height, float fov, float aspect, const glm::vec3 & lookFrom, const glm::vec3 & lookAt) = 0;
 
-    unordered_map<string, shared_ptr<texture>> textures;
+    unordered_map<string, shared_ptr<textureBase>> textures;
     unordered_map<string, shared_ptr<materialBase>> materials;
     unordered_map<string, shared_ptr<primitiveBase>> objects;
 
     virtual void createTextures() = 0;
     virtual void createMatrials() = 0;
     virtual void createObjects() = 0;
-    virtual shared_ptr<texture> getTexture(string name);
+    virtual shared_ptr<textureBase> getTexture(string name);
     virtual shared_ptr<materialBase> getMatrial(string name);
     virtual shared_ptr<primitiveBase> getObject(string name);
 };

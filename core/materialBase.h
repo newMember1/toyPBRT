@@ -13,7 +13,7 @@
 class materialBase
 {
 public:
-    materialBase(std::shared_ptr<texture> _tex)
+    materialBase(std::shared_ptr<textureBase> _tex)
     {
         this->tex=_tex;
     }
@@ -21,7 +21,7 @@ public:
     virtual glm::vec3 albedo(const hitRecord &hitRec,const glm::vec3 & lightDirec,const glm::vec3 & eyeDirec)=0;
 
     bool isLight=false;
-    std::shared_ptr<texture> tex=nullptr;
+    std::shared_ptr<textureBase> tex=nullptr;
 
     float niOverNt = 1.0;
     enum materialType type;

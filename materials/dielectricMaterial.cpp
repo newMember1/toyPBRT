@@ -1,6 +1,6 @@
 #include "dielectricMaterial.h"
 
-dielectricMaterial::dielectricMaterial(std::shared_ptr<texture> tex, float ratio)
+dielectricMaterial::dielectricMaterial(std::shared_ptr<textureBase> tex, float ratio)
     :materialBase(tex)
 {
     //default glass refract ratio

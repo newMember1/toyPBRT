@@ -11,7 +11,7 @@ sceneBase::~sceneBase()
 {
 }
 
-shared_ptr<texture> sceneBase::getTexture(string name)
+shared_ptr<textureBase> sceneBase::getTexture(string name)
 {
     if(textures.find(name) != textures.end())
         return textures[name];

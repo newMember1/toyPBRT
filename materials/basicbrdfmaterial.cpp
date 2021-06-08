@@ -2,7 +2,7 @@
 
 extern bool debugFlag;
 
-basicBRDFMaterial::basicBRDFMaterial(std::shared_ptr<texture> texture):
+basicBRDFMaterial::basicBRDFMaterial(std::shared_ptr<textureBase> texture):
     materialBase(texture)
 {
     type = materialType::basicBRDFMatrial;
@@ -11,7 +11,7 @@ basicBRDFMaterial::basicBRDFMaterial(std::shared_ptr<texture> texture):
     roughness = 0.5;
 }
 
-basicBRDFMaterial::basicBRDFMaterial(std::shared_ptr<texture> texture, float m, float r):
+basicBRDFMaterial::basicBRDFMaterial(std::shared_ptr<textureBase> texture, float m, float r):
     materialBase(texture)
 {
     type = materialType::basicBRDFMatrial;

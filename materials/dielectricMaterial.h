@@ -5,7 +5,7 @@
 class dielectricMaterial : public materialBase
 {
 public:
-    dielectricMaterial(std::shared_ptr<texture> tex, float ratio);
+    dielectricMaterial(std::shared_ptr<textureBase> tex, float ratio);
     glm::vec3 albedo(const hitRecord &hitRec, const glm::vec3 &inDirec, const glm::vec3 &outDirec) override;
 
     void setNiOverNt(float ratio);
